@@ -3,47 +3,22 @@ import { ref, onMounted } from 'vue';
 
 const movies = ref([]);
 
-const randomMovieIds = [
-    'tt0111161', 
-    'tt0068646', 
-    'tt0071562', 
-    'tt0468569',
-    'tt0050083', 
-    'tt0108052', 
-    'tt0167260', 
-    'tt0110912', 
-    'tt0137523', 
-    'tt1375666'  
-];
+const apiUrl = "https://api.themoviedb.org/3/movie/popular?api_key=fdf961e48b3b6bc9aa35095abb5a8d86&language=es-ES&page=1";
 
-const fetchRandomMovies = async () => {
+const fetchPopularMovies = async () => {
     try {
-        const randomIds = [];
-        while (randomIds.length < 4) {
-            const randomMovieId = randomMovieIds[Math.floor(Math.random() * randomMovieIds.length)];
-         
-            if (!randomIds.includes(randomMovieId)) {
-                randomIds.push(randomMovieId);
-            }
-        }
+        const response = await fetch(apiUrl);
+        const data = await response.json();
 
-        const movieRequests = randomIds.map(id =>
-            fetch(`http://www.omdbapi.com/?i=${id}&apikey=fa7a736b`).then(response => response.json())
-        );
-
-        const movieData = await Promise.all(movieRequests);
-
-        movies.value = movieData;
-
-        saveMoviesToDatabase(movieData);  
+        movies.value = data.results;
 
     } catch (error) {
-        console.error('Error al obtener las películas:', error);
+        console.error('Error al obtener las películas populares:', error);
     }
 };
 
-const saveMoviesToDatabase = async (movieData) => {
-    for (const movie of movieData) {
+const saveMoviesToDatabase = async () => {
+    for (const movie of movies.value) {
         try {
             const response = await fetch('http://localhost:8000/api/pelis', {
                 method: 'POST',
@@ -51,8 +26,9 @@ const saveMoviesToDatabase = async (movieData) => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    title: movie.Title,
-                    poster: movie.Poster
+                    title: movie.title,   
+                    poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`, 
+                    price: movie.vote_average ? parseFloat(movie.vote_average) : 0 
                 }),
             });
 
@@ -68,5 +44,46 @@ const saveMoviesToDatabase = async (movieData) => {
     }
 };
 
-onMounted(fetchRandomMovies);
+onMounted(fetchPopularMovies);
 </script>
+
+<template>
+    <div>
+        <h2>Películas Populares</h2>
+
+        <button @click="saveMoviesToDatabase">Guardar películas</button>
+
+        <div v-if="movies.length" class="movie-grid">
+            <div v-for="movie in movies" :key="movie.id" class="movie-card">
+                <h3>{{ movie.title }} ({{ movie.release_date.split('-')[0] }})</h3>
+                <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" alt="Poster de la película" class="movie-poster">
+            </div>
+        </div>
+
+        <p v-else>No se encontraron películas</p>
+    </div>
+</template>
+
+<style scoped>
+.movie-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.movie-card {
+    background-color: #f8f8f8;
+    padding: 16px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.movie-poster {
+    width: 100%;
+    height: auto;
+    max-width: 150px;
+    margin-top: 8px;
+}
+</style>

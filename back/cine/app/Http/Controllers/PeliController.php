@@ -9,19 +9,20 @@ class PeliController extends Controller
 {
     public function store(Request $request)
     {
-        
+      
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'price' => 'required|int|max:255',
-            'poster' => 'required|string|max:255',
+            'poster_path' => 'required|string|max:255',
+            'vote_average' => 'nullable|int', 
         ]);
 
         $movie = new Peli();
         $movie->title = $validated['title'];
-        $movie->price = $validated['price'];
-        $movie->poster = $validated['poster'];
+        $movie->poster_path = $validated['poster_path'];
+        $movie->vote_average = $validated['vote_average'] ?? 0;  
         $movie->save();
 
-        return response()->json($movie, 201); 
+        return response()->json($movie, 201);
     }
 }
+

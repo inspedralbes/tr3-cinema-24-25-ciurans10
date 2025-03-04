@@ -14,8 +14,8 @@ return new class extends Migration
     Schema::create('pelis', function (Blueprint $table) {
         $table->id();
         $table->string('title');
-        $table->decimal('price', 8, 2);
-        $table->string('poster');
+        $table->string('poster_path');
+        $table->integer('vote_average')->nullable();  
         $table->timestamps();
     });
 }
