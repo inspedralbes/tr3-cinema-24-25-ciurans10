@@ -5,46 +5,23 @@ namespace App\Http\Controllers;
 use App\Models\Peli;
 use Illuminate\Http\Request;
 
-
-class ProductController extends Controller
+class PeliController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        return Peli::all();
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
-    }
+        
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'price' => 'required|int|max:255',
+            'poster' => 'required|string|max:255',
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+        $movie = new Peli();
+        $movie->title = $validated['title'];
+        $movie->price = $validated['price'];
+        $movie->poster = $validated['poster'];
+        $movie->save();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return response()->json($movie, 201); 
     }
 }

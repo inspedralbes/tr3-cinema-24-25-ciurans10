@@ -13,9 +13,9 @@ return new class extends Migration
 {
     Schema::create('pelis', function (Blueprint $table) {
         $table->id();
-        $table->string('name');
+        $table->string('title');
         $table->decimal('price', 8, 2);
-        $table->string('image_url');
+        $table->string('poster');
         $table->timestamps();
     });
 }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('products');
+        Schema::dropIfExists('pelis');
     }
 };
