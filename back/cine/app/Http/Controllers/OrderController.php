@@ -22,7 +22,7 @@ class OrderController extends Controller
     {
         $order = Order::create([
             'user_id' => auth()->id(),
-            'products' => json_encode($request->products),
+            'pelis' => json_encode($request->products),
             'total' => $request->total
         ]);
 
