@@ -7,22 +7,21 @@ use Illuminate\Http\Request;
 
 class PeliController extends Controller
 {
+    public function index()
+    {
+        return response()->json(Peli::all());
+    }
+
     public function store(Request $request)
     {
-      
-        $validated = $request->validate([
+        $request->validate([
             'title' => 'required|string|max:255',
-            'poster_path' => 'required|string|max:255',
-            'vote_average' => 'nullable|int', 
+            'poster_path' => 'required|string',
+            'price' => 'required|numeric'
         ]);
 
-        $movie = new Peli();
-        $movie->title = $validated['title'];
-        $movie->poster_path = $validated['poster_path'];
-        $movie->vote_average = $validated['vote_average'] ?? 0;  
-        $movie->save();
+        $peli = Peli::create($request->all());
 
-        return response()->json($movie, 201);
+        return response()->json($peli, 201);
     }
 }
-
