@@ -7,14 +7,17 @@
         <p><strong>Descripción:</strong> {{ movie.overview }}</p>
         <p><strong>Fecha de estreno:</strong> {{ movie.release_date }}</p>
         <p><strong>Promedio de votos:</strong> {{ movie.vote_average }}</p>
-      
-        <router-link :to="`/butacas`">
-          <button class="buy-button">🎟️ Comprar entradas</button>
-        </router-link>
+        
+        <div class="buttons-container">
+          <router-link :to="`/butacas`">
+            <button class="buy-button">🎟️ Comprar entradas</button>
+          </router-link>
+          <router-link to="/cartelera" class="back-link">
+            <button class="back-button">Volver a la cartelera</button>
+          </router-link>
+        </div>
       </div>
     </div>
-
-    <router-link to="/cartelera" class="back-link">Volver a la cartelera</router-link>
   </div>
   <div v-else class="loading">Cargando detalles...</div>
 </template>
@@ -65,10 +68,11 @@ onMounted(fetchMovieDetails);
 }
 
 .movie-poster {
-  width: 200px; 
+  width: 250px; 
   height: auto;
   max-width: 100%;
   object-fit: cover; 
+  margin-top: 25px;
 }
 
 .movie-info {
@@ -82,6 +86,14 @@ onMounted(fetchMovieDetails);
   margin: 10px 0;
 }
 
+/* Contenedor para los botones */
+.buttons-container {
+  display: flex;
+  gap: 10px; /* Espacio entre los botones */
+  margin-top: 20px;
+}
+
+/* Botón de "Comprar entradas" */
 .buy-button {
   padding: 12px 24px;
   background-color: #FFD700;
@@ -91,7 +103,6 @@ onMounted(fetchMovieDetails);
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  margin-top: 20px;
   transition: background-color 0.3s ease;
 }
 
@@ -99,11 +110,25 @@ onMounted(fetchMovieDetails);
   background-color: #FFC107;
 }
 
+/* Botón de "Volver a la cartelera" */
+.back-button {
+  padding: 12px 24px;
+  background-color: #007bff;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #0056b3;
+}
+
 .back-link {
-  display: inline-block;
-  margin-top: 20px;
-  text-decoration: none;
-  color: #007bff;
+  text-decoration: none; /* Para quitar el subrayado del enlace */
 }
 
 .loading {
