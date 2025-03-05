@@ -2,11 +2,15 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../views/Home.vue';
 import Cartelera from '../views/Cartelera.vue';
 import DetallesPeli from '../views/DetallesPeli.vue';
+import Login from '../views/Login.vue';
+import Register from '../views/Register.vue';
 
 const routes = [
   { path: '/', component: Home },
   { path: '/cartelera', component: Cartelera },
-  { path: '/pelicula/:id', component: DetallesPeli }
+  { path: '/pelicula/:id', component: DetallesPeli },
+  { path: '/login', component: Login },
+  { path: '/register', component: Register }
 ];
 
 const router = createRouter({
