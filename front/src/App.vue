@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <header v-if="!isLoginPage && !isRegisterPage">
+    <header v-if="!isLoginPage && !isRegisterPage && !isButacasPage">
       <nav>
         <ul>
           <li><router-link to="/">Inicio</router-link></li>
@@ -15,7 +15,7 @@
       <router-view></router-view>
     </main>
 
-    <footer v-if="!isLoginPage && !isRegisterPage">
+    <footer v-if="!isLoginPage && !isRegisterPage && !isButacasPage">
       <p>&copy; 2025 Mi Cine. Todos los derechos reservados.</p>
     </footer>
   </div>
@@ -32,8 +32,9 @@ export default {
     const isLoginPage = computed(() => route.path === "/login");
 
     const isRegisterPage = computed(() => route.path === "/register");
+    const isButacasPage = computed(() => route.path === "/butacas");
 
-    return { isLoginPage, isRegisterPage };
+    return { isLoginPage, isRegisterPage, isButacasPage};
   }
 };
 </script>

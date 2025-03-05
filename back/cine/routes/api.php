@@ -11,4 +11,5 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
 Route::get('/pelis', [PeliController::class, 'index']);
+Route::get('/pelicula/{id}', [PeliController::class, 'show']);
 Route::post('/pelis', [PeliController::class, 'store']);

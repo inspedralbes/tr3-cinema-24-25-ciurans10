@@ -9,5 +9,5 @@ class Peli extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'poster_path', 'price'];
+    protected $fillable = ['title', 'poster_path', 'overview', 'release_date', 'vote_average', 'price'];
 }
