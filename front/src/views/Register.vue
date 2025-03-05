@@ -2,6 +2,7 @@
     <div class="w-screen h-screen flex items-center justify-center bg-gray-900 bg-cover login-background">
       <div class="login-container">
         <h2 class="login-title">🎬 Registro</h2>
+        <input v-model="name" type="text" placeholder="Nombre" class="login-input">
         <input v-model="email" type="email" placeholder="Correo" class="login-input">
         <input v-model="password" type="password" placeholder="Contraseña" class="login-input">
         <input v-model="confirmPassword" type="password" placeholder="Confirmar Contraseña" class="login-input">
@@ -13,7 +14,7 @@
   <script>
   export default {
     data() {
-      return { email: '', password: '', confirmPassword: '' };
+      return { name: '', email: '', password: '', confirmPassword: '' };
     },
     methods: {
       async register() {
@@ -24,17 +25,20 @@
         
         try {
           const res = await fetch('http://localhost:8000/api/register', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: this.email, password: this.password })
-          });
-          
+          method: 'POST',
+          headers: {'Content-Type': 'application/json',},
+          body: JSON.stringify({name: this.name, email: this.email, password: this.password,
+          }),
+        });
+
           if (!res.ok) {
             throw new Error('Error en el registro');
           }
           
           const data = await res.json();
-          alert('Registro exitoso');
+          localStorage.setItem('token', data.token);
+          this.$router.push('/');
+          
         } catch (error) {
           alert(error.message);
         }
@@ -44,13 +48,6 @@
   </script>
   
   <style scoped>
-  .login-background {
-    background-image: url('/foto-cine.webp');
-    background-size: cover;
-    background-position: center;
-    width: 100%;
-    height: 100%;
-  }
   
   .login-container {
     background: rgba(255, 255, 255, 0.9);
