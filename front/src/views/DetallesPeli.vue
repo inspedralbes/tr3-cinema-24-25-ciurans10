@@ -5,14 +5,15 @@
       <div class="movie-info">
         <h2 class="movie-title">{{ movie.title }}</h2>
         <p><strong>Descripción:</strong> {{ movie.overview }}</p>
-        <p><strong>Fecha de estreno:</strong> {{ movie.release_date }}</p>
-        <p><strong>Promedio de votos:</strong> {{ movie.vote_average }}</p>
-        
-        <div class="buttons-container">
+
+        <div class="movie-details-header">
+          <p><strong>Fecha de estreno:</strong> {{ movie.release_date }}</p>
           <router-link to="/cartelera" class="back-link">
             <button class="back-button">Volver a la cartelera</button>
           </router-link>
         </div>
+
+        <p><strong>Promedio de votos:</strong> {{ movie.vote_average }}</p>
       </div>
     </div>
   </div>
@@ -24,10 +25,10 @@ import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 
 const movie = ref(null);
-const route = useRoute(); 
+const route = useRoute();
 
 const fetchMovieDetails = async () => {
-  const movieId = route.params.id; 
+  const movieId = route.params.id;
   try {
     const response = await fetch(`http://localhost:8000/api/pelicula/${movieId}`);
     if (!response.ok) {
@@ -52,9 +53,9 @@ onMounted(fetchMovieDetails);
 
 .movie-container {
   display: flex;
-  align-items: flex-start; 
-  justify-content: center; 
-  gap: 20px; 
+  align-items: flex-start;
+  justify-content: center;
+  gap: 20px;
   margin-bottom: 20px;
 }
 
@@ -65,49 +66,31 @@ onMounted(fetchMovieDetails);
 }
 
 .movie-poster {
-  width: 250px; 
+  width: 250px;
   height: auto;
   max-width: 100%;
-  object-fit: cover; 
+  object-fit: cover;
   margin-top: 25px;
 }
 
 .movie-info {
   font-size: 18px;
   line-height: 1.5;
-  max-width: 600px; 
-  text-align: left; 
+  max-width: 600px;
+  text-align: left;
 }
 
 .movie-info p {
   margin: 10px 0;
 }
 
-/* Contenedor para los botones */
-.buttons-container {
+.movie-details-header {
   display: flex;
-  gap: 10px; /* Espacio entre los botones */
-  margin-top: 20px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px; 
 }
 
-/* Botón de "Comprar entradas" */
-.buy-button {
-  padding: 12px 24px;
-  background-color: #FFD700;
-  color: #000;
-  font-size: 1.2rem;
-  font-weight: bold;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.buy-button:hover {
-  background-color: #FFC107;
-}
-
-/* Botón de "Volver a la cartelera" */
 .back-button {
   padding: 12px 24px;
   background-color: #007bff;
@@ -118,6 +101,7 @@ onMounted(fetchMovieDetails);
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin-top: 20px; 
 }
 
 .back-button:hover {
@@ -125,7 +109,7 @@ onMounted(fetchMovieDetails);
 }
 
 .back-link {
-  text-decoration: none; /* Para quitar el subrayado del enlace */
+  text-decoration: none;
 }
 
 .loading {

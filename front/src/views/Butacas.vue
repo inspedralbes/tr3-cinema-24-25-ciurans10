@@ -1,76 +1,48 @@
 <template>
-  <div class="butacas-container">
-    <h1>Selecciona tus butacas</h1>
-    <p>Película: {{ title }}</p>
-    <p>Sesión: {{ sessionTime }}</p>
-    <p>Fecha: {{ selectedDate }}</p>
+  <div class="contenedor">
+    <div class="butacas-container">
+      <h1>Selecciona les teves butaques</h1>
 
-    <div class="butacas-grid">
-      <div
-        v-for="(butaca, index) in butacas"
-        :key="butaca.label"
-        :class="[ 
-          'butaca', 
-          butaca.status, 
-          { 'seleccionada': selectedButacas.includes(butaca.label) }, 
-          { 'vip': butaca.fila === 6 } 
-        ]"
-        @click="selectButaca(butaca)"
-      >
-        {{ butaca.label }}
+      <div class="butacas-grid">
+        <div
+          v-for="butaca in butacas"
+          :key="butaca.label"
+          :class="[ 'butaca', butaca.status, { 'seleccionada': selectedSeats.includes(butaca.label) }, { 'vip': butaca.fila === 6 } ]"
+          @click="selectSeat(butaca)"
+        >
+          {{ butaca.label }}
+        </div>
       </div>
+
+      <p class="seleccionadas-info">
+        Butaques seleccionades: {{ selectedSeats.length }} / 10
+      </p>
+
+      <button 
+        :disabled="selectedSeats.length === 0" 
+        @click="confirmSelection"
+      >
+        Confirmar selecció
+      </button>
     </div>
-
-    <p class="seleccionadas-info">
-      Butacas seleccionadas: {{ selectedButacas.length }} / 10
-    </p>
-
-    <button 
-      :disabled="selectedButacas.length === 0" 
-      @click="confirmSelection"
-    >
-      Confirmar selección
-    </button>
   </div>
 </template>
 
 <script>
 export default {
-  props: ['movieId', 'sessionTime', 'selectedDate', 'title'],  // Recibimos los props
+  props: ['title', 'selectedDate', 'sessionTime', 'posterPath'],  
 
   data() {
     return {
       butacas: this.generateSeats(),
-      selectedButacas: [],
+      selectedSeats: [] 
     };
   },
 
-  watch: {
-    movieId(newMovieId) {
-      this.fetchMovieTitle(newMovieId);  // Si movieId cambia, actualizamos el título
-    }
-  },
-
   methods: {
-    // Función para obtener el título de la película usando movieId
-    async fetchMovieTitle(movieId) {
-      if (!this.title) {
-        try {
-          const response = await fetch(`http://localhost:8000/api/peliculas/${movieId}`);
-          if (!response.ok) {
-            throw new Error('Error al obtener los detalles de la película');
-          }
-          const movie = await response.json();
-          this.title = movie.title; 
-        } catch (error) {
-          console.error('Error al obtener el título de la película:', error);
-        }
-      }
-    },
-
     generateSeats() {
       let seats = [];
-      const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
+      const rows = 'ABCDEFGHIJKL'.split('');
       for (let i = 0; i < rows.length; i++) {
         for (let j = 1; j <= 10; j++) {
           seats.push({
@@ -80,56 +52,48 @@ export default {
           });
         }
       }
-
-      // Hacer la fila 6 VIP
-      seats.forEach(seat => {
-        if (seat.fila === 6) {
-          seat.status = 'disponible'; 
-        }
-      });
       return seats;
     },
 
-    selectButaca(butaca) {
-      if (butaca.status === 'ocupada') {
-        return;
-      }
+    selectSeat(butaca) {
+      if (butaca.status === 'ocupada') return;
 
-      if (this.selectedButacas.includes(butaca.label)) {
-        this.selectedButacas = this.selectedButacas.filter((b) => b !== butaca.label);
+      if (this.selectedSeats.includes(butaca.label)) {
+        this.selectedSeats = this.selectedSeats.filter(seat => seat !== butaca.label);
       } else {
-        if (this.selectedButacas.length < 10) {
-          this.selectedButacas.push(butaca.label);
+        if (this.selectedSeats.length < 10) {
+          this.selectedSeats.push(butaca.label);
         }
       }
     },
 
     confirmSelection() {
-      alert(`Butacas seleccionadas: ${this.selectedButacas.join(', ')}`);
+      alert(`Butaques seleccionades: ${this.selectedSeats.join(', ')}`);
     },
-  },
-
-  mounted() {
-    // Si no tenemos el título, lo buscamos usando movieId
-    if (!this.title && this.movieId) {
-      this.fetchMovieTitle(this.movieId);
-    }
-  },
+  }
 };
-
-
 </script>
 
 <style scoped>
+
+.contenedor {
+  display: flex;
+  max-width: 1100px;
+  margin: auto;
+  gap: 40px;
+  align-items: flex-start;
+  justify-content: center;
+  position: relative; 
+}
+
 .butacas-container {
+  flex: 1;
   text-align: center;
-  max-width: 800px;
-  margin: 0 auto;
 }
 
 .butacas-grid {
   display: grid;
-  grid-template-columns: repeat(10, 1fr); /* 10 columnas */
+  grid-template-columns: repeat(10, 1fr);
   gap: 10px;
   margin: 20px 0;
 }
@@ -144,23 +108,23 @@ export default {
 }
 
 .butaca.disponible {
-  background-color: #808080; /* Gris */
+  background-color: #808080;
   color: white;
 }
 
 .butaca.ocupada {
-  background-color: #ff4d4d; /* Rojo */
+  background-color: #ff4d4d;
   color: white;
   cursor: not-allowed;
 }
 
 .butaca.seleccionada {
-  background-color: #28a745; /* Verde */
+  background-color: #28a745;
   color: white;
 }
 
 .butaca.vip {
-  background-color: #ffd700; /* Dorado para VIP */
+  background-color: #ffd700;
   color: white;
 }
 

@@ -39,13 +39,10 @@ const fetchMoviesFromDatabase = async () => {
   }
 };
 
-
 onMounted(fetchMoviesFromDatabase);
 </script>
 
-
 <style scoped>
-
 .title {
   text-align: center;
   font-size: 2rem;
@@ -57,7 +54,7 @@ onMounted(fetchMoviesFromDatabase);
 
 .movie-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
+  grid-template-columns: repeat(4, 1fr); /* Cambié a 4 columnas */
   gap: 20px;
   margin-top: 20px;
   padding: 0 20px;
