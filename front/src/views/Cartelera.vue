@@ -1,16 +1,15 @@
 <template>
   <div>
-    <h2 class="title">Properes Sessions</h2>
-
+    <h2 class="title">Películas</h2>
     <div v-if="movies.length" class="movie-grid">
       <div v-for="movie in movies" :key="movie.id" class="movie-card">
         <router-link :to="`/pelicula/${movie.id}`" class="movie-link">
           <div class="movie-image-container">
             <img :src="movie.poster_path" alt="Poster de la película" class="movie-poster">
-              <div class="overlay">
-                <h3>{{ movie.title }}</h3>
-                <p>{{ movie.showtime }}</p>
-              </div>
+            <div class="overlay">
+              <h3>{{ movie.title }}</h3>
+              <p>{{ movie.showtime }}</p>
+            </div>
           </div>
         </router-link>
       </div>
@@ -27,21 +26,23 @@ const movies = ref([]);
 
 const fetchMoviesFromDatabase = async () => {
   try {
-    const response = await fetch('http://localhost:8000/api/peliculas'); 
+    const response = await fetch('http://localhost:8000/api/peliculas');
     if (!response.ok) {
       throw new Error('Error al obtener las películas desde la base de datos');
     }
 
     const data = await response.json();
     movies.value = data;
-
   } catch (error) {
     console.error('Error al obtener las películas:', error);
+    alert('Hubo un error al obtener las películas. Verifica la consola.');
   }
 };
 
+
 onMounted(fetchMoviesFromDatabase);
 </script>
+
 
 <style scoped>
 

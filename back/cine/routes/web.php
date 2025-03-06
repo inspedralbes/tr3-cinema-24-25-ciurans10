@@ -7,6 +7,6 @@ Route::get('/', function () {
     return view('index');
 });
 
-Route::get('/peliculas', [PeliController::class, 'index'])->name('peliculas.index'); 
+Route::resource('peliculas', PeliController::class); 
 Route::resource('sesiones', SessonController::class);    
-Route::resource('tickets', TicketController::class);
+Route::resource('tickets', TicketController::class);    

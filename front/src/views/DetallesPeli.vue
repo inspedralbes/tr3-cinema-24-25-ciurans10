@@ -9,9 +9,6 @@
         <p><strong>Promedio de votos:</strong> {{ movie.vote_average }}</p>
         
         <div class="buttons-container">
-          <router-link :to="`/butacas`">
-            <button class="buy-button">🎟️ Comprar entradas</button>
-          </router-link>
           <router-link to="/cartelera" class="back-link">
             <button class="back-button">Volver a la cartelera</button>
           </router-link>

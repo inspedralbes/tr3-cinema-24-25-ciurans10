@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->string('title');
             $table->string('poster_path');
-            $table->text('overview')->default('Sin descripción disponible')->change();  
+            $table->text('overview')->nullable(); 
             $table->date('release_date'); 
             $table->decimal('vote_average', 3, 2)->default(0.00); 
             $table->decimal('price', 8, 2)->default(0.00);

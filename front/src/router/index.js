@@ -5,6 +5,7 @@ import DetallesPeli from '../views/DetallesPeli.vue';
 import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
 import Butacas from '../views/Butacas.vue';
+import Sessions from '../views/Sessions.vue';
 
 const routes = [
   { path: '/', component: Home },
@@ -12,7 +13,14 @@ const routes = [
   { path: '/pelicula/:id', component: DetallesPeli },
   { path: '/login', component: Login },
   { path: '/register', component: Register },
-  { path: '/butacas', component: Butacas }
+  { path: '/butacas', component: Butacas },
+  {
+    path: '/butacas/:movieId/:sessionTime/:selectedDate',
+    name: 'Butacas',
+    component: Butacas,
+    props: true 
+  },
+  { path: '/sessions', component: Sessions }
 ];
 
 const router = createRouter({

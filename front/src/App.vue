@@ -5,6 +5,7 @@
         <ul>
           <li><router-link to="/">Inicio</router-link></li>
           <li><router-link to="/cartelera">Cartelera</router-link></li>
+          <li><router-link to="/sessions">Sessions</router-link></li>
           <li><router-link to="/login">Inicia Sesión</router-link></li>
           <li><router-link to="/register">Regístrate</router-link></li>
         </ul>
