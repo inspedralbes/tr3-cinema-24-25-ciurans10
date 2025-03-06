@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="title">Cartelera de Películas</h2>
+    <h2 class="title">Properes Sessions</h2>
 
     <div v-if="movies.length" class="movie-grid">
       <div v-for="movie in movies" :key="movie.id" class="movie-card">
@@ -27,7 +27,7 @@ const movies = ref([]);
 
 const fetchMoviesFromDatabase = async () => {
   try {
-    const response = await fetch('http://localhost:8000/api/pelis'); 
+    const response = await fetch('http://localhost:8000/api/peliculas'); 
     if (!response.ok) {
       throw new Error('Error al obtener las películas desde la base de datos');
     }

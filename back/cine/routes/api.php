@@ -10,6 +10,9 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
-Route::get('/pelis', [PeliController::class, 'index']);
+Route::get('/peliculas', [PeliController::class, 'index']);
 Route::get('/pelicula/{id}', [PeliController::class, 'show']);
-Route::post('/pelis', [PeliController::class, 'store']);
+Route::post('/peliculas', [PeliController::class, 'store']);
+Route::delete('/peliculas/{id}', [PeliController::class, 'destroy']);
+Route::put('/peliculas/{id}', [PeliController::class, 'update']);
+
