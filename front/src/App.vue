@@ -19,20 +19,20 @@
     </main>
 
     <footer v-if="!isLoginPage && !isRegisterPage && !isButacasPage">
-      <div class="footer-content">
-        <div class="seleccionadas-info-footer">
-          <p>Butaques seleccionades: {{ selectedSeats.length }} / 10</p>
-          <button
-            :disabled="selectedSeats.length === 0"
-            @click="confirmSelection"
-          >
-            Confirmar selecció
-          </button>
+      <div class="footer-container">
+        <div class="footer-content">
+          <p>&copy; 2025 Mi Cine. Todos los derechos reservados.</p>
+          <nav class="footer-links">
+            <router-link to="/about">Sobre nosotros</router-link>
+            <router-link to="/contact">Contacto</router-link>
+            <router-link to="/terms">Términos y condiciones</router-link>
+          </nav>
         </div>
       </div>
     </footer>
   </div>
 </template>
+
 
 <script>
 import { computed, ref } from "vue";
@@ -79,6 +79,7 @@ export default {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background-color: #1c2b36;
 }
 
 header {
@@ -156,49 +157,40 @@ main {
 }
 
 footer {
-  background-color: #222;
+  background: linear-gradient(135deg, #4b79a1, #283e51);
   color: #fff;
-  padding: 40px 0;
-  margin-top: 20px;
-  
-}
-
-footer .footer-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-footer p {
-  margin: 10px 0;
-  font-size: 20px;
-  font-weight: bold;
-  color: #ffcc00;
-}
-
-footer .seleccionadas-info-footer {
+  padding: 20px 0;
   text-align: center;
+  margin-top: 30px;
 }
 
-footer button {
-  background-color: #ffcc00;
-  padding: 15px 30px;
-  border-radius: 8px;
-  color: black;
-  font-size: 18px;
-  font-weight: bold;
-  border: none;
-  cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
+.footer-container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 0 20px;
 }
 
-footer button:hover {
-  background-color: #ffdb4d;
-  transform: scale(1.05);
+.footer-content p {
+  margin: 10px 0;
+  font-size: 16px;
 }
 
-footer button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 10px;
 }
+
+.footer-links a {
+  text-decoration: none;
+  color: #ffcc00;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: #ffdb4d;
+}
+
 </style>

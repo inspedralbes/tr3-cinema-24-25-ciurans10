@@ -3,20 +3,45 @@
     <div class="butacas-container">
       <h1>Selecciona les teves butaques</h1>
 
+      <div class="estado-butacas">
+        <div class="leyenda-item">
+          <span class="vip"></span> VIP
+        </div>
+        <div class="leyenda-item">
+          <span class="disponible"></span> Disponible
+        </div>
+        <div class="leyenda-item">
+          <span class="seleccionada"></span> Seleccionada
+        </div>
+        <div class="leyenda-item">
+          <span class="ocupada"></span> Ocupada
+        </div>
+      </div>
+
       <div class="butacas-grid">
         <div
           v-for="butaca in butacas"
           :key="butaca.label"
-          :class="[ 'butaca', butaca.status, { 'seleccionada': selectedSeats.includes(butaca.label) }, { 'vip': butaca.fila === 6 } ]"
+          :class="[
+            'butaca',
+            { 
+              'seleccionada': selectedSeats.includes(butaca.label),
+              'vip': butaca.vip,
+              'ocupada': butaca.ocupada
+            }
+          ]"
           @click="selectSeat(butaca)"
         >
           {{ butaca.label }}
         </div>
       </div>
 
-      <p class="seleccionadas-info">
-        Butaques seleccionades: {{ selectedSeats.length }} / 10
-      </p>
+      <div class="info-seleccion">
+        <p>Butaques seleccionades: {{ selectedSeats.length }} / 10</p>
+        <div class="detalles-extra">
+          <span v-if="selectedVipCount > 0">VIP: {{ selectedVipCount }}</span>
+        </div>
+      </div>
 
       <button 
         :disabled="selectedSeats.length === 0" 
@@ -25,130 +50,162 @@
         Confirmar selecció
       </button>
     </div>
+
+    <div class="notario-section" v-if="codigoNotario">
+      <h3>Codi de reserva:</h3>
+      <p class="codigo-notario">{{ codigoNotario }}</p>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  props: ['title', 'selectedDate', 'sessionTime', 'posterPath'],  
-
   data() {
     return {
       butacas: this.generateSeats(),
-      selectedSeats: [] 
+      selectedSeats: [],
+      codigoNotario: null
     };
+  },
+
+  computed: {
+    selectedVipCount() {
+      return this.butacas.filter(b => 
+        this.selectedSeats.includes(b.label) && b.vip
+      ).length;
+    }
   },
 
   methods: {
     generateSeats() {
-      let seats = [];
       const rows = 'ABCDEFGHIJKL'.split('');
-      for (let i = 0; i < rows.length; i++) {
-        for (let j = 1; j <= 10; j++) {
-          seats.push({
-            label: `${rows[i]}${j}`,
-            fila: i + 1,
-            status: 'disponible',  
-          });
-        }
-      }
-      return seats;
+      return rows.flatMap((row, index) => 
+        Array.from({length: 10}, (_, i) => ({
+          label: `${row}${i + 1}`,
+          fila: index + 1,
+          vip: index === 5, 
+        }))
+      );
     },
 
     selectSeat(butaca) {
-      if (butaca.status === 'ocupada') return;
+      if (butaca.ocupada || (this.selectedSeats.length >= 10 && !this.selectedSeats.includes(butaca.label))) return;
 
-      if (this.selectedSeats.includes(butaca.label)) {
-        this.selectedSeats = this.selectedSeats.filter(seat => seat !== butaca.label);
-      } else {
-        if (this.selectedSeats.length < 10) {
-          this.selectedSeats.push(butaca.label);
-        }
-      }
-    },
-
-    confirmSelection() {
-      alert(`Butaques seleccionades: ${this.selectedSeats.join(', ')}`);
+      this.selectedSeats = this.selectedSeats.includes(butaca.label)
+        ? this.selectedSeats.filter(seat => seat !== butaca.label)
+        : [...this.selectedSeats, butaca.label];
     },
   }
 };
 </script>
 
 <style scoped>
-
 .contenedor {
-  display: flex;
-  max-width: 1100px;
-  margin: auto;
-  gap: 40px;
-  align-items: flex-start;
-  justify-content: center;
-  position: relative; 
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 20px;
 }
 
 .butacas-container {
-  flex: 1;
-  text-align: center;
+  background: #d0e1f2;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.estado-butacas {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  margin: 1rem 0 2rem;
+}
+
+.leyenda-item span {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  border-radius: 3px;
+}
+
+.vip {
+  background: #FFC107;
+}
+
+.disponible {
+  background: gray;
+}
+
+.seleccionada {
+  background: #0ddd2f;
+}
+
+.ocupada {
+  background: red;
+  cursor: not-allowed;
 }
 
 .butacas-grid {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
-  gap: 10px;
-  margin: 20px 0;
+  gap: 8px;
+  margin: 2rem 0;
 }
 
 .butaca {
-  padding: 15px;
-  font-size: 1rem;
+  padding: 12px;
   text-align: center;
-  border-radius: 5px;
+  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.butaca.disponible {
-  background-color: #808080;
-  color: white;
-}
-
-.butaca.ocupada {
-  background-color: #ff4d4d;
-  color: white;
-  cursor: not-allowed;
-}
-
-.butaca.seleccionada {
-  background-color: #28a745;
+  transition: transform 0.2s;
+  background: gray;
   color: white;
 }
 
 .butaca.vip {
-  background-color: #ffd700;
-  color: white;
+  background: #FFC107;
 }
 
-.butaca:hover {
+.butaca.ocupada {
+  background: red;
+  cursor: not-allowed;
+}
+
+.butaca.seleccionada {
+  background: #0ddd2f;
   transform: scale(1.1);
 }
 
-.seleccionadas-info {
+.info-seleccion {
+  margin: 1.5rem 0;
   font-size: 1.1rem;
-  margin-top: 20px;
+}
+
+.detalles-extra {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  color: #666;
 }
 
 button {
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 20px;
+  background: #673AB7;
+  padding: 12px 30px;
+  font-size: 1.1rem;
+  transition: all 0.3s;
 }
 
-button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
+button:hover:not(:disabled) {
+  background: #512DA8;
+  transform: translateY(-2px);
+}
+
+.codigo-notario {
+  word-break: break-all;
+  background: #eee;
+  padding: 1rem;
+  border-radius: 6px;
+  font-family: monospace;
 }
 </style>

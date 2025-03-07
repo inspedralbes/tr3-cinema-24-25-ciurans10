@@ -82,13 +82,14 @@ export default {
 }
 
 h1 {
-  color: #2c3e50;
+  color: white;
   font-size: 2.5rem;
   margin-bottom: 20px;
 }
 
 .date-picker {
   margin-bottom: 20px;
+  color: white;
 }
 
 label {
@@ -106,7 +107,7 @@ input[type="date"] {
 
 .movies-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* Ahora 3 películas por fila */
+  grid-template-columns: repeat(3, 1fr);
   gap: 30px;
 }
 
@@ -120,11 +121,11 @@ input[type="date"] {
 }
 
 .movie-card:hover {
-  transform: scale(1.07);
+  transform: scale(1.04);
 }
 
 .movie-image {
-  max-width: 200px; /* Imagen más grande */
+  max-width: 250px; 
   border-radius: 12px;
 }
 

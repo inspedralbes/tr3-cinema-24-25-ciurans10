@@ -17,7 +17,6 @@
       </div>
     </div>
   </div>
-  <div v-else class="loading">Cargando detalles...</div>
 </template>
 
 <script setup>
@@ -49,6 +48,7 @@ onMounted(fetchMovieDetails);
 .movie-details {
   padding: 20px;
   text-align: center;
+  color: white;
 }
 
 .movie-container {

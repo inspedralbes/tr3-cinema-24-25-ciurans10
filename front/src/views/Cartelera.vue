@@ -14,8 +14,6 @@
         </router-link>
       </div>
     </div>
-
-    <p v-else>No se encontraron películas</p>
   </div>
 </template>
 
@@ -47,14 +45,14 @@ onMounted(fetchMoviesFromDatabase);
   text-align: center;
   font-size: 2rem;
   font-weight: bold;
-  color: #161613;
+  color: white;
   text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
   margin-bottom: 30px;
 }
 
 .movie-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* Cambié a 4 columnas */
+  grid-template-columns: repeat(4, 1fr); 
   gap: 20px;
   margin-top: 20px;
   padding: 0 20px;

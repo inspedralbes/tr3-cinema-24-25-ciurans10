@@ -15,5 +15,10 @@ h1 {
   text-align: center;
   font-size: 2.5em;
   margin-top: 50px;
+  color: white;
+}
+
+p{
+  color:white;
 }
 </style>
