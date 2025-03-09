@@ -6,6 +6,7 @@ import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
 import Butacas from '../views/Butacas.vue';
 import Sessions from '../views/Sessions.vue';
+import Entradas from '../views/Entradas.vue';
 
 const routes = [
   { path: '/', component: Home },
@@ -20,7 +21,8 @@ const routes = [
     component: Butacas,
     props: true 
   },
-  { path: '/sessions', component: Sessions }
+  { path: '/sessions', component: Sessions },
+  { path: '/entradas', component: Entradas }
 ];
 
 const router = createRouter({

@@ -45,8 +45,7 @@
 
       <button 
         :disabled="selectedSeats.length === 0" 
-        @click="confirmSelection"
-      >
+        @click="confirmSelection">
         Confirmar selecció
       </button>
     </div>
@@ -59,12 +58,18 @@
 </template>
 
 <script>
+import { useRouter } from 'vue-router';
+
 export default {
   data() {
     return {
       butacas: this.generateSeats(),
       selectedSeats: [],
-      codigoNotario: null
+      pelicula: {
+        movie: "Nombre de la película",
+        date: "2025-03-10",
+        time: "20:00"
+      }
     };
   },
 
@@ -95,9 +100,22 @@ export default {
         ? this.selectedSeats.filter(seat => seat !== butaca.label)
         : [...this.selectedSeats, butaca.label];
     },
+
+    confirmSelection() {
+    if (this.selectedSeats.length === 0) return;
+
+    const ticketData = {
+      ...this.pelicula,
+      seats: this.selectedSeats
+    };
+
+    this.$router.push({ name: 'entradas', query: { ticket: JSON.stringify(ticketData) } });
+  }
+
   }
 };
 </script>
+
 
 <style scoped>
 .contenedor {
