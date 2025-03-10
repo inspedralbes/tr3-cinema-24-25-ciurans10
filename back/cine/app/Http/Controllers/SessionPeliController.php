@@ -1,81 +1,85 @@
 <?php
 
-
 namespace App\Http\Controllers;
 
 use App\Models\SessionPeli;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class SessionPeliController extends Controller
 {
     public function index()
     {
-        $sesiones = SessionPeli::all();
+        return response()->json(SessionPeli::all());
+    }
 
-        return view('sesiones.index', compact('sesiones'));
+    public function mostrarSesiones()
+    {
+        $sesiones = SessionPeli::all();  
+        return view('sesiones.index', compact('sesiones'));  
     }
 
     public function store(Request $request)
     {
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
+            'poster_path' => 'required|string',
             'date' => 'required|date',
             'time' => 'required|date_format:H:i',
-            'poster_path' => 'required|string',
         ]);
 
-        $imagePath = $request->file('image')->store('images', 'public');
+        $sesion = new SessionPeli(); 
+        $sesion->title = $validatedData['title'];
+        $sesion->poster_path = $validatedData['poster_path'];
+        $sesion->date = $validatedData['date'];
+        $sesion->time = $validatedData['time'];
 
-        SessionPeli::create([
-            'title' => $validatedData['title'],
-            'date' => $validatedData['date'],
-            'time' => $validatedData['time'],
-            'poster_path' => $validatedData['poster_path']
-        ]);
+        $sesion->save();
 
-        return redirect()->route('sesiones.index')->with('success', 'Sesión agregada correctamente.');
+        return redirect()->route('sesiones.index')->with('success', 'Sesión creada exitosamente');
+    }
+
+    public function show($id)
+    {
+        $sesion = SessionPeli::find($id);
+
+        if (!$sesion) {
+            return response()->json(['error' => 'Sesión no encontrada'], 404);
+        }
+
+        return response()->json($sesion);
     }
 
     public function update(Request $request, $id)
     {
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
+            'poster_path' => 'required|string',
             'date' => 'required|date',
             'time' => 'required|date_format:H:i',
-            'poster_path' => 'required|string',
         ]);
 
         $sesion = SessionPeli::findOrFail($id);
 
-        if ($request->hasFile('image')) {
-            
-            Storage::disk('public')->delete($sesion->image);
+        $sesion->title = $validatedData['title'];
+        $sesion->poster_path = $validatedData['poster_path'];
+        $sesion->date = $validatedData['date'];
+        $sesion->time = $validatedData['time'];
 
-            $imagePath = $request->file('image')->store('images', 'public');
-        } else {
-            $imagePath = $sesion->image; 
-        }
+        $sesion->save();
 
-        $sesion->update([
-            'title' => $validatedData['title'],
-            'date' => $validatedData['date'],
-            'time' => $validatedData['time'],
-            'poster_path' => $validatedData['poster_path'],
-        ]);
-
-        return redirect()->route('sesiones.index')->with('success', 'Sesión actualizada correctamente.');
+        return redirect()->route('sesiones.index')->with('success', 'Sesión actualizada correctamente');
     }
 
     public function destroy($id)
     {
-        $sesion = SessionPeli::findOrFail($id);
+        $sesion = SessionPeli::find($id);
 
-        Storage::disk('public')->delete($sesion->image);
+        if (!$sesion) {
+            return response()->json(['error' => 'Sesión no encontrada'], 404);
+        }
 
         $sesion->delete();
 
-        return redirect()->route('sesiones.index')->with('success', 'Sesión eliminada correctamente.');
+        return redirect()->route('sesiones.index')->with('success', 'Sesión eliminada correctamente');
     }
 }
-

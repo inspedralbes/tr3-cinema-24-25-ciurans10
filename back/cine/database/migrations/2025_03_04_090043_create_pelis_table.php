@@ -14,7 +14,6 @@ return new class extends Migration {
             $table->text('overview')->nullable(); 
             $table->date('release_date'); 
             $table->decimal('vote_average', 3, 2)->default(0.00); 
-            $table->decimal('price', 8, 2)->default(0.00);
             $table->timestamps();
         });
     }

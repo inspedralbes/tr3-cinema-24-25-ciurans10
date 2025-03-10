@@ -25,7 +25,6 @@ class PeliSeeder extends Seeder
                     'overview' => $movie['overview'] ?? 'Sin descripción disponible',  
                     'release_date' => $movie['release_date'] ?? null,  
                     'vote_average' => $movie['vote_average'] ?? 0,  
-                    'price' => rand(5, 8),  
                 ]);
             }
         }

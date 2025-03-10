@@ -9,7 +9,7 @@
 <body>
     <div class="container mt-5">
         <h1 class="mb-4">Listado de Sesiones</h1>
-
+        <a href="{{ route('home') }}" class="btn btn-secondary mb-3">Panel de Administración</a>
         <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#createModal">Agregar Nueva Sesión</button>
 
         <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">

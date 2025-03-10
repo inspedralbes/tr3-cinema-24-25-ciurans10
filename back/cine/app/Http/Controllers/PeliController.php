@@ -27,7 +27,6 @@ class PeliController extends Controller
         'poster_path' => 'required|string',
         'release_date' => 'required|date',
         'vote_average' => 'required|numeric|min:0|max:10',
-        'price' => 'required|numeric|min:0',
     ]);
 
     $peli = new Peli(); 
@@ -35,7 +34,6 @@ class PeliController extends Controller
     $peli->poster_path = $validatedData['poster_path'];
     $peli->release_date = $validatedData['release_date'];
     $peli->vote_average = $validatedData['vote_average'];
-    $peli->price = $validatedData['price'];
 
     $peli->save();
 
@@ -62,7 +60,6 @@ class PeliController extends Controller
         'poster_path' => 'required|string',
         'release_date' => 'required|date',
         'vote_average' => 'required|numeric|min:0|max:10',
-        'price' => 'required|numeric|min:0',
     ]);
 
     $peli = Peli::findOrFail($id);
@@ -71,7 +68,6 @@ class PeliController extends Controller
     $peli->poster_path = $validatedData['poster_path'];
     $peli->release_date = $validatedData['release_date'];
     $peli->vote_average = $validatedData['vote_average'];
-    $peli->price = $validatedData['price'];
 
     $peli->save();
 
