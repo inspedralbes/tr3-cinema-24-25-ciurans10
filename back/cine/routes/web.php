@@ -3,11 +3,21 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PeliController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\SesionController;
+use App\Http\Controllers\SessionPeliController;
 use App\Http\Controllers\TicketController;
 
 
 Route::get('/', [AdminController::class, 'index']);
+
 Route::get('/peliculas', [PeliController::class, 'mostrarPeliculas'])->name('peliculas.index');
-Route::get('/sesiones', [SesionController::class, 'index'])->name('sesiones.index');
-Route::get('/tickets', [SesionController::class, 'index'])->name('tickets.index');  
+Route::get('/peliculas/create', [PeliController::class, 'create'])->name('peliculas.create');
+Route::post('/peliculas', [PeliController::class, 'store'])->name('peliculas.store');
+Route::put('/peliculas/{id}', [PeliController::class, 'update'])->name('peliculas.update');
+Route::delete('/peliculas/{id}', [PeliController::class, 'destroy'])->name('peliculas.destroy');
+
+Route::get('/sesiones', [SessionPeliController::class, 'index'])->name('sesiones.index');
+Route::post('/sesiones', [SessionPeliController::class, 'store'])->name('sesiones.store');
+Route::put('/sesiones/{id}', [SessionPeliController::class, 'update'])->name('sesiones.update');
+Route::delete('/sesiones/{id}', [SessionPeliController::class, 'destroy'])->name('sesiones.destroy');
+
+Route::get('/tickets', [TicketController::class, 'index'])->name('tickets.index');      

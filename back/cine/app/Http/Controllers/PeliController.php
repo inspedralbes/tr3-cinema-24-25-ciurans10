@@ -20,20 +20,28 @@ class PeliController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'poster_path' => 'required|string',
-            'overview' => 'required|string',
-            'release_date' => 'required|date',
-            'vote_average' => 'required|numeric|min:0|max:10',
-            'price' => 'required|numeric',
-        ]);
+{
+    
+    $validatedData = $request->validate([
+        'title' => 'required|string|max:255',
+        'poster_path' => 'required|string',
+        'release_date' => 'required|date',
+        'vote_average' => 'required|numeric|min:0|max:10',
+        'price' => 'required|numeric|min:0',
+    ]);
 
-        $peli = Peli::create($request->all());
+    $peli = new Peli(); 
+    $peli->title = $validatedData['title'];
+    $peli->poster_path = $validatedData['poster_path'];
+    $peli->release_date = $validatedData['release_date'];
+    $peli->vote_average = $validatedData['vote_average'];
+    $peli->price = $validatedData['price'];
 
-        return response()->json($peli, 201);
-    }
+    $peli->save();
+
+    return redirect()->route('peliculas.index')->with('success', 'Película creada exitosamente');
+}
+
 
     public function show($id)
     {
@@ -47,26 +55,29 @@ class PeliController extends Controller
     }
 
     public function update(Request $request, $id)
-    {
-        $peli = Peli::find($id);
+{
+    
+    $validatedData = $request->validate([
+        'title' => 'required|string|max:255',
+        'poster_path' => 'required|string',
+        'release_date' => 'required|date',
+        'vote_average' => 'required|numeric|min:0|max:10',
+        'price' => 'required|numeric|min:0',
+    ]);
 
-        if (!$peli) {
-            return response()->json(['error' => 'Película no encontrada'], 404);
-        }
+    $peli = Peli::findOrFail($id);
 
-        $request->validate([
-            'title' => 'sometimes|string|max:255',
-            'poster_path' => 'sometimes|string',
-            'overview' => 'sometimes|string',
-            'release_date' => 'sometimes|date',
-            'vote_average' => 'sometimes|numeric|min:0|max:10',
-            'price' => 'sometimes|numeric',
-        ]);
+    $peli->title = $validatedData['title'];
+    $peli->poster_path = $validatedData['poster_path'];
+    $peli->release_date = $validatedData['release_date'];
+    $peli->vote_average = $validatedData['vote_average'];
+    $peli->price = $validatedData['price'];
 
-        $peli->update($request->all());
+    $peli->save();
 
-        return response()->json($peli);
-    }
+    return redirect()->route('peliculas.index')->with('success', 'Película actualizada correctamente');
+}
+
 
     public function destroy($id)
     {
@@ -78,6 +89,6 @@ class PeliController extends Controller
 
         $peli->delete();
 
-        return response()->json(['message' => 'Película eliminada correctamente']);
+        return redirect()->route('peliculas.index')->with('success', 'Película eliminada correctamente');
     }
 }

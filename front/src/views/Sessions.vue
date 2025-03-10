@@ -3,15 +3,20 @@
     <h1>📅 Properes Sessions</h1>
 
     <div class="date-picker">
-      <label for="sessionDate">Selecciona una data:</label>
+      <label for="sessionDate">Selecciona una fecha:</label>
       <input type="date" id="sessionDate" v-model="selectedDate">
+    </div>
+
+    <div class="time-picker">
+      <label for="sessionTime">Selecciona una hora:</label>
+      <input type="time" id="sessionTime" v-model="selectedTime">
     </div>
 
     <div v-if="movies.length" class="movies-grid">
       <div v-for="movie in movies" :key="movie.id" class="movie-card">
         <img :src="'https://image.tmdb.org/t/p/w500' + movie.poster_path" :alt="movie.title" class="movie-image">
         <h2>{{ movie.title }}</h2>
-        <h3>Horaris:</h3>
+        <h3>Horarios:</h3>
         <ul>
           <li v-for="session in movie.sessions" :key="session" @click="selectSession(movie, session)">
             ⏰ {{ session }}
@@ -29,7 +34,8 @@ export default {
   data() {
     return {
       movies: [],
-      selectedDate: new Date().toISOString().split('T')[0]
+      selectedDate: new Date().toISOString().split('T')[0],  
+      selectedTime: '16:00',  
     };
   },
   methods: {
@@ -41,10 +47,9 @@ export default {
         }
 
         const data = await response.json();
-      
         this.movies = data.slice(0, 9).map(movie => ({
           ...movie,
-          sessions: this.generateSessions()
+          sessions: this.generateSessions()  
         }));
       } catch (error) {
         console.error('Error al obtener las películas:', error);
@@ -52,16 +57,18 @@ export default {
       }
     },
     generateSessions() {
-      return ["16:00", "18:00", "20:00"];
+      return ["16:00", "18:00", "20:00"];  
     },
     selectSession(movie, session) {
+     
       this.$router.push({
-        name: 'Butacas', 
+        name: 'Butacas',
         params: {
-          movieId: movie.id,  
-          title: movie.title,  
+          movieId: movie.id,
+          title: movie.title,
           sessionTime: session,
-          selectedDate: this.selectedDate,
+          selectedDate: this.selectedDate,  
+          selectedTime: this.selectedTime,  
           posterPath: movie.poster_path
         }
       });
@@ -74,7 +81,8 @@ export default {
 </script>
 
 <style scoped>
-.container {  
+
+.container {
   max-width: 1100px;
   margin: auto;
   text-align: center;
@@ -87,7 +95,7 @@ h1 {
   margin-bottom: 20px;
 }
 
-.date-picker {
+.date-picker, .time-picker {
   margin-bottom: 20px;
   color: white;
 }
@@ -98,7 +106,7 @@ label {
   font-weight: bold;
 }
 
-input[type="date"] {
+input[type="date"], input[type="time"] {
   padding: 10px;
   font-size: 1.1rem;
   border: 1px solid #ccc;
@@ -125,7 +133,7 @@ input[type="date"] {
 }
 
 .movie-image {
-  max-width: 250px; 
+  max-width: 250px;
   border-radius: 12px;
 }
 

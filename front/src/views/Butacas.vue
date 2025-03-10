@@ -1,119 +1,15 @@
 <template>
   <div class="contenedor">
-    <div class="butacas-container">
       <h1>Selecciona les teves butaques</h1>
 
-      <div class="estado-butacas">
-        <div class="leyenda-item">
-          <span class="vip"></span> VIP
-        </div>
-        <div class="leyenda-item">
-          <span class="disponible"></span> Disponible
-        </div>
-        <div class="leyenda-item">
-          <span class="seleccionada"></span> Seleccionada
-        </div>
-        <div class="leyenda-item">
-          <span class="ocupada"></span> Ocupada
-        </div>
-      </div>
-
-      <div class="butacas-grid">
-        <div
-          v-for="butaca in butacas"
-          :key="butaca.label"
-          :class="[
-            'butaca',
-            { 
-              'seleccionada': selectedSeats.includes(butaca.label),
-              'vip': butaca.vip,
-              'ocupada': butaca.ocupada
-            }
-          ]"
-          @click="selectSeat(butaca)"
-        >
-          {{ butaca.label }}
-        </div>
-      </div>
-
-      <div class="info-seleccion">
-        <p>Butaques seleccionades: {{ selectedSeats.length }} / 10</p>
-        <div class="detalles-extra">
-          <span v-if="selectedVipCount > 0">VIP: {{ selectedVipCount }}</span>
-        </div>
-      </div>
-
-      <button 
-        :disabled="selectedSeats.length === 0" 
-        @click="confirmSelection">
-        Confirmar selecció
-      </button>
-    </div>
-
-    <div class="notario-section" v-if="codigoNotario">
-      <h3>Codi de reserva:</h3>
-      <p class="codigo-notario">{{ codigoNotario }}</p>
-    </div>
+     
   </div>
 </template>
 
 <script>
 import { useRouter } from 'vue-router';
 
-export default {
-  data() {
-    return {
-      butacas: this.generateSeats(),
-      selectedSeats: [],
-      pelicula: {
-        movie: "Nombre de la película",
-        date: "2025-03-10",
-        time: "20:00"
-      }
-    };
-  },
 
-  computed: {
-    selectedVipCount() {
-      return this.butacas.filter(b => 
-        this.selectedSeats.includes(b.label) && b.vip
-      ).length;
-    }
-  },
-
-  methods: {
-    generateSeats() {
-      const rows = 'ABCDEFGHIJKL'.split('');
-      return rows.flatMap((row, index) => 
-        Array.from({length: 10}, (_, i) => ({
-          label: `${row}${i + 1}`,
-          fila: index + 1,
-          vip: index === 5, 
-        }))
-      );
-    },
-
-    selectSeat(butaca) {
-      if (butaca.ocupada || (this.selectedSeats.length >= 10 && !this.selectedSeats.includes(butaca.label))) return;
-
-      this.selectedSeats = this.selectedSeats.includes(butaca.label)
-        ? this.selectedSeats.filter(seat => seat !== butaca.label)
-        : [...this.selectedSeats, butaca.label];
-    },
-
-    confirmSelection() {
-    if (this.selectedSeats.length === 0) return;
-
-    const ticketData = {
-      ...this.pelicula,
-      seats: this.selectedSeats
-    };
-
-    this.$router.push({ name: 'entradas', query: { ticket: JSON.stringify(ticketData) } });
-  }
-
-  }
-};
 </script>
 
 
