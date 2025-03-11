@@ -1,35 +1,43 @@
 <template>
-    <div class="max-w-md mx-auto bg-white shadow-lg rounded-lg p-6">
-      <h2 class="text-xl font-bold mb-4">Confirmación de Entradas</h2>
-      <div v-if="ticket">
-        <p><strong>Pelicula:</strong> {{ ticket.movie }}</p>
-        <p><strong>Fecha:</strong> {{ ticket.date }}</p>
-        <p><strong>Hora:</strong> {{ ticket.time }}</p>
-        <p><strong>Asientos:</strong> {{ ticket.seats.join(", ") }}</p>
-        <div class="flex justify-between mt-4">
-          <button @click="confirm" class="bg-green-500 text-white px-4 py-2 rounded">Confirmar</button>
-          <button @click="cancel" class="bg-red-500 text-white px-4 py-2 rounded">Cancelar</button>
-        </div>
+  <div class="flex justify-center items-center min-h-screen bg-gradient-to-r from-blue-400 to-purple-500">
+    <div class="w-full max-w-lg bg-white shadow-2xl rounded-xl p-8 transform transition duration-300 hover:scale-105">
+      <h2 class="text-3xl font-bold text-center text-gray-800 mb-6"> Confirmació d'entrada</h2>
+      
+      <div v-if="ticket" class="space-y-4 text-gray-700 text-lg">
+        <p><strong> Nom:</strong> <span class="text-gray-900">{{ ticket.nombre }}</span></p>
+        <p><strong> Cognom:</strong> <span class="text-gray-900">{{ ticket.apellido }}</span></p>
+        <p><strong> Telèfon:</strong> <span class="text-gray-900">{{ ticket.telefono }}</span></p>
+        <p><strong> Asientos:</strong> <span class="font-semibold text-blue-600">{{ ticket.seats.join(", ") }}</span></p>
       </div>
-      <p v-else class="text-gray-500">Cargando información...</p>
+      
+      <div v-else class="text-gray-500 text-center text-lg">Cargando información...</div>
+      
+      <div v-if="ticket" class="flex justify-between mt-6">
+        <button @click="confirm" class="w-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-600 transform transition hover:scale-105">
+           Confirmar
+        </button>
+        <button @click="cancel" class="w-1/2 bg-red-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-red-600 transform transition hover:scale-105 ml-4">
+           Cancelar
+        </button>
+      </div>
     </div>
-  </template>
-  
-  <script setup>
-  import { ref, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+  </div>
+</template>
 
-const route = useRoute();
+<script setup>
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+
 const router = useRouter();
 const ticket = ref(null);
 
 onMounted(() => {
-  if (route.query.ticket) {
-    try {
-      ticket.value = JSON.parse(route.query.ticket);
-    } catch (error) {
-      console.error("Error al analizar los datos del ticket:", error);
-    }
+ 
+  const storedTicket = sessionStorage.getItem('ticketData');
+  if (storedTicket) {
+    ticket.value = JSON.parse(storedTicket);
+  } else {
+    console.error('No se encontró el ticket en sessionStorage');
   }
 });
 
@@ -39,10 +47,17 @@ const confirm = () => {
 
 const cancel = () => {
   console.log("Reserva cancelada");
-  router.push({ name: "butacas" }); 
+  router.push({ path: "/butacas" });
 };
-  </script>
-  
-  <style scoped>
-  </style>
-  
+
+</script>
+
+<style scoped>
+h2{
+  color: white;
+}
+
+p{
+  color:white;
+}
+</style>
