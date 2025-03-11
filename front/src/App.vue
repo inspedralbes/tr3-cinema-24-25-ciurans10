@@ -8,7 +8,7 @@
         <ul>
           <li><router-link to="/">Inici</router-link></li>
           <li><router-link to="/cartelera">Películas</router-link></li>
-          <li><router-link to="/sessions">Sesiones</router-link></li>
+          <li><router-link to="/sessions">Sessions</router-link></li>
           <li v-if="!isLoginPage && !isRegisterPage"><router-link to="/login" class="login-button">Inicia Sesió</router-link></li>
         </ul>
       </nav>

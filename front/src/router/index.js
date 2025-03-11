@@ -11,7 +11,16 @@ import Entradas from '../views/Entradas.vue';
 const routes = [
   { path: '/', component: Home },
   { path: '/cartelera', component: Cartelera },
-  { path: '/pelicula/:id', component: DetallesPeli },
+  { 
+    path: '/pelicula/:movieId/:title/:posterPath', 
+    name: 'DetallesPeli', 
+    component: DetallesPeli,
+    props: route => ({
+      movieId: route.params.movieId,
+      title: decodeURIComponent(route.params.title),
+      posterPath: decodeURIComponent(route.params.posterPath),
+    })
+  },
   { path: '/login', component: Login },
   { path: '/register', component: Register },
   { path: '/butacas', component: Butacas },

@@ -3,7 +3,6 @@
     <h2 class="title">Películas</h2>
     <div v-if="movies.length" class="movie-grid">
       <div v-for="movie in movies" :key="movie.id" class="movie-card">
-        <router-link :to="`/pelicula/${movie.id}`" class="movie-link">
           <div class="movie-image-container">
             <img :src="movie.poster_path" alt="Poster de la película" class="movie-poster">
             <div class="overlay">
@@ -11,7 +10,6 @@
               <p>{{ movie.showtime }}</p>
             </div>
           </div>
-        </router-link>
       </div>
     </div>
   </div>

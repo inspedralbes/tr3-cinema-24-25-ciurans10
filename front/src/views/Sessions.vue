@@ -9,14 +9,27 @@
 
     <div v-if="movies.length" class="movies-grid">
       <div v-for="movie in movies" :key="movie.id" class="movie-card">
-        <img :src="'https://image.tmdb.org/t/p/w500' + movie.poster_path" :alt="movie.title" class="movie-image">
+        
+        <router-link 
+  :to="{ 
+    name: 'DetallesPeli', 
+    params: { 
+      movieId: movie.id, 
+      title: encodeURIComponent(movie.title), 
+      posterPath: encodeURIComponent(movie.poster_path) 
+    } 
+  }"
+  class="image-link"
+>
+  <img 
+    :src="'https://image.tmdb.org/t/p/w500' + movie.poster_path" 
+    :alt="movie.title" 
+    class="movie-image"
+  >
+  </router-link>
+
+
         <h2>{{ movie.title }}</h2>
-        <h3>Horarios:</h3>
-        <ul>
-          <li v-for="session in movie.sessions" :key="session" @click="selectSession(movie, session)">
-             {{ session }}
-          </li>
-        </ul>
       </div>
     </div>
 
@@ -28,10 +41,9 @@
 export default {
   data() {
     return {
-      allMovies: [],  
-      movies: [],  
-      selectedDate: new Date().toISOString().split('T')[0],  
-      selectedTime: '',  
+      allMovies: [],
+      movies: [],
+      selectedDate: new Date().toISOString().split('T')[0],
     };
   },
   methods: {
@@ -43,37 +55,40 @@ export default {
         }
 
         const data = await response.json();
-        this.allMovies = data; 
-        this.updateMoviesForDate();  
+        this.allMovies = data;
+        this.updateMoviesForDate();
       } catch (error) {
         console.error('Error al obtener las películas:', error);
         alert('Hubo un error al obtener las películas. Verifica la consola.');
       }
     },
-    
+
     updateMoviesForDate() {
-     
-      const moviesForDate = this.getMoviesForDate(this.selectedDate);
-      this.movies = moviesForDate.map(movie => ({
+      this.movies = this.getMoviesForDate(this.selectedDate).map(movie => ({
         ...movie,
-        sessions: this.generateSessions(), 
+        sessions: this.generateSessions(),
       }));
     },
 
     getMoviesForDate(date) {
-      
-      const movieSets = {
-        '2025-03-11': this.allMovies.slice(0, 3),  // Películas para el 11 de marzo
-        '2025-03-12': this.allMovies.slice(3, 6),  // Películas para el 12 de marzo
-        '2025-03-13': this.allMovies.slice(6, 9),  // Películas para el 13 de marzo
-        
-      };
+      if (!this.allMovies.length) return [];
 
-      return movieSets[date] || this.allMovies.slice(0, 3);  // Si no hay un conjunto para la fecha, se usan las primeras tres
+      const totalMovies = this.allMovies.length;
+      const dateOffset = this.calculateDateOffset(date);
+      const startIndex = (dateOffset * 3) % totalMovies; 
+
+      return this.allMovies.slice(startIndex, startIndex + 3);
+    },
+
+    calculateDateOffset(date) {
+      const baseDate = new Date("2025-03-01");
+      const currentDate = new Date(date);
+      const diffInDays = Math.floor((currentDate - baseDate) / (1000 * 60 * 60 * 24));
+      return diffInDays;
     },
 
     generateSessions() {
-      return ["16:00", "18:00", "20:00"];  // Horarios predeterminados
+      return ["16:00", "18:00", "20:00"];
     },
 
     selectSession(movie, session) {
@@ -83,18 +98,18 @@ export default {
           movieId: movie.id,
           title: movie.title,
           sessionTime: session,
-          selectedDate: this.selectedDate,  
-          selectedTime: this.selectedTime,  
+          selectedDate: this.selectedDate,
           posterPath: movie.poster_path
         }
       });
-    }
+    },
   },
   mounted() {
     this.fetchMoviesFromDatabase();
   }
 };
 </script>
+
 
 <style scoped>
 .container {
