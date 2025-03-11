@@ -9,5 +9,5 @@ class Ticket extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'email', 'title', 'cantidad', 'price'];
+    protected $fillable = ['name', 'email', 'sesion_id', 'cantidad', 'price'];
 }

@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->string('email');
-            $table->string('title');
+            $table->integer('sesion_id');
             $table->integer('cantidad');
             $table->decimal('price', 8, 2);
             $table->timestamps();

@@ -23,7 +23,7 @@ class TicketController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|max:255',
-            'title' => 'required|string|max:255',
+            'sesion_id' => 'required|integer|max:1',
             'cantidad' => 'required|integer|min:1',
             'price' => 'required|numeric|min:0',
         ]);
@@ -31,7 +31,7 @@ class TicketController extends Controller
         $ticket = new Ticket();
         $ticket->name = $validatedData['name'];
         $ticket->email = $validatedData['email'];
-        $ticket->title = $validatedData['title'];
+        $ticket->sesion_id = $validatedData['sesion_id'];
         $ticket->cantidad = $validatedData['cantidad'];
         $ticket->price = $validatedData['price'];
         $ticket->save();
@@ -55,7 +55,7 @@ class TicketController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|max:255',
-            'title' => 'required|string|max:255',
+            'sesion_id' => 'required|integer|max:1',
             'cantidad' => 'required|integer|min:1',
             'price' => 'required|numeric|min:0',
         ]);
@@ -63,7 +63,7 @@ class TicketController extends Controller
         $ticket = Ticket::findOrFail($id);
         $ticket->name = $validatedData['name'];
         $ticket->email = $validatedData['email'];
-        $ticket->title = $validatedData['title'];
+        $ticket->sesion_id = $validatedData['sesion_id'];
         $ticket->cantidad = $validatedData['cantidad'];
         $ticket->price = $validatedData['price'];
         $ticket->save();

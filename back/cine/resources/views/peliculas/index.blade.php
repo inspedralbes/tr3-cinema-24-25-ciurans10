@@ -38,10 +38,6 @@
                                 <label for="vote_average" class="form-label">Calificación</label>
                                 <input type="number" step="0.1" min="0" max="10" class="form-control" id="vote_average" name="vote_average" required>
                             </div>
-                            <div class="mb-3">
-                                <label for="price" class="form-label">Precio</label>
-                                <input type="number" step="0.1" min="0" class="form-control" id="price" name="price" required>
-                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -60,7 +56,6 @@
                     <th>Poster</th>
                     <th>Fecha de Estreno</th>
                     <th>Calificación</th>
-                    <th>Precio</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -72,7 +67,6 @@
                         <td><img src="{{ $peli->poster_path }}" alt="Poster" width="50"></td>
                         <td>{{ $peli->release_date }}</td>
                         <td>{{ $peli->vote_average }}</td>
-                        <td>${{ $peli->price }}</td>
                         <td>
                             
                             <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ $peli->id }}">
@@ -105,10 +99,6 @@
                                                 <div class="mb-3">
                                                     <label for="vote_average" class="form-label">Calificación</label>
                                                     <input type="number" step="0.1" min="0" max="10" class="form-control" id="vote_average" name="vote_average" value="{{ $peli->vote_average }}" required>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="price" class="form-label">Precio</label>
-                                                    <input type="number" step="0.1" min="0" class="form-control" id="price" name="price" value="{{ $peli->price }}" required>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
