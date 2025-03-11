@@ -1,10 +1,10 @@
 <template>
   <div class="container">
-    <h1> Properes Sessions</h1>
+    <h1>Properes Sessions</h1>
 
     <div class="date-picker">
       <label for="sessionDate">Selecciona una fecha:</label>
-      <input type="date" id="sessionDate" v-model="selectedDate">
+      <input type="date" id="sessionDate" v-model="selectedDate" @change="updateMoviesForDate">
     </div>
 
     <div v-if="movies.length" class="movies-grid">
@@ -28,9 +28,10 @@
 export default {
   data() {
     return {
-      movies: [],
+      allMovies: [],  
+      movies: [],  
       selectedDate: new Date().toISOString().split('T')[0],  
-      selectedTime: '16:00',  
+      selectedTime: '',  
     };
   },
   methods: {
@@ -42,20 +43,40 @@ export default {
         }
 
         const data = await response.json();
-        this.movies = data.slice(0, 9).map(movie => ({
-          ...movie,
-          sessions: this.generateSessions()  
-        }));
+        this.allMovies = data; 
+        this.updateMoviesForDate();  
       } catch (error) {
         console.error('Error al obtener las películas:', error);
         alert('Hubo un error al obtener las películas. Verifica la consola.');
       }
     },
-    generateSessions() {
-      return ["16:00", "18:00", "20:00"];  
-    },
-    selectSession(movie, session) {
+    
+    updateMoviesForDate() {
      
+      const moviesForDate = this.getMoviesForDate(this.selectedDate);
+      this.movies = moviesForDate.map(movie => ({
+        ...movie,
+        sessions: this.generateSessions(), 
+      }));
+    },
+
+    getMoviesForDate(date) {
+      
+      const movieSets = {
+        '2025-03-11': this.allMovies.slice(0, 3),  // Películas para el 11 de marzo
+        '2025-03-12': this.allMovies.slice(3, 6),  // Películas para el 12 de marzo
+        '2025-03-13': this.allMovies.slice(6, 9),  // Películas para el 13 de marzo
+        
+      };
+
+      return movieSets[date] || this.allMovies.slice(0, 3);  // Si no hay un conjunto para la fecha, se usan las primeras tres
+    },
+
+    generateSessions() {
+      return ["16:00", "18:00", "20:00"];  // Horarios predeterminados
+    },
+
+    selectSession(movie, session) {
       this.$router.push({
         name: 'Butacas',
         params: {
@@ -76,7 +97,6 @@ export default {
 </script>
 
 <style scoped>
-
 .container {
   max-width: 1100px;
   margin: auto;
