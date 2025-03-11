@@ -9,7 +9,7 @@
           <li><router-link to="/">Inici</router-link></li>
           <li><router-link to="/cartelera">Películas</router-link></li>
           <li><router-link to="/sessions">Sesiones</router-link></li>
-          <li><router-link to="/login" class="login-button">Inicia Sesió</router-link></li>
+          <li v-if="!isLoginPage && !isRegisterPage"><router-link to="/login" class="login-button">Inicia Sesió</router-link></li>
         </ul>
       </nav>
     </header>
@@ -32,7 +32,6 @@
     </footer>
   </div>
 </template>
-
 
 <script>
 import { computed, ref } from "vue";
@@ -192,5 +191,4 @@ footer {
 .footer-links a:hover {
   color: #ffdb4d;
 }
-
 </style>

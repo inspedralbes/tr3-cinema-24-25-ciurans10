@@ -1,15 +1,10 @@
 <template>
   <div class="container">
-    <h1>📅 Properes Sessions</h1>
+    <h1> Properes Sessions</h1>
 
     <div class="date-picker">
       <label for="sessionDate">Selecciona una fecha:</label>
       <input type="date" id="sessionDate" v-model="selectedDate">
-    </div>
-
-    <div class="time-picker">
-      <label for="sessionTime">Selecciona una hora:</label>
-      <input type="time" id="sessionTime" v-model="selectedTime">
     </div>
 
     <div v-if="movies.length" class="movies-grid">
@@ -19,7 +14,7 @@
         <h3>Horarios:</h3>
         <ul>
           <li v-for="session in movie.sessions" :key="session" @click="selectSession(movie, session)">
-            ⏰ {{ session }}
+             {{ session }}
           </li>
         </ul>
       </div>
