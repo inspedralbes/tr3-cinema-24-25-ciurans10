@@ -160,7 +160,7 @@ footer {
   color: #fff;
   padding: 20px 0;
   text-align: center;
-  margin-top: 30px;
+  margin-top: 20px;
 }
 
 .footer-container {

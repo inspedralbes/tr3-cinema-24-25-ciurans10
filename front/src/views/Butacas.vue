@@ -31,8 +31,8 @@
       <input type="text" v-model="nombre" placeholder="El teu nom" />
       <label>Cognom:</label>
       <input type="text" v-model="apellido" placeholder="El teu cognom" />
-      <label>Telèfon:</label>
-      <input type="tel" v-model="telefono" placeholder="El teu telèfon" />
+      <label>Email:</label>
+      <input type="email" v-model="email" placeholder="El teu email" />
       <button @click="enviarDatos">Enviar</button>
     </div>
 
@@ -42,7 +42,7 @@
         <h3>Compra anterior:</h3>
         <p>Butaques: {{ previousPurchase.seats.join(', ') }}</p>
         <p>Nom: {{ previousPurchase.nombre }} {{ previousPurchase.apellido }}</p>
-        <p>Telèfon: {{ previousPurchase.telefono }}</p> 
+        <p>Email: {{ previousPurchase.email }}</p> 
       </div>
     </div>
   </div>
@@ -50,6 +50,7 @@
 
 <script>
 import { useRoute, useRouter } from 'vue-router';
+import Swal from 'sweetalert2';
 
 export default {
   data() {
@@ -61,7 +62,7 @@ export default {
       mostrarFormulario: false,
       nombre: '',
       apellido: '',
-      telefono: '',
+      email: '',
       errorMessage: '',
       previousPurchase: null,
     };
@@ -88,7 +89,6 @@ export default {
   },
   methods: {
     toggleButaca(fila, butaca) {
-     
       const precio = fila === 'F' ? 8 : 6; 
 
       if (this.butaquesSeleccionades.length >= 10 && !this.butaquesSeleccionades.includes(fila + butaca)) {
@@ -124,41 +124,72 @@ export default {
         this.mostrarFormulario = true;
       }
     },
-    enviarDatos() {
-      if (!this.nombre || !this.apellido || !this.telefono) {
-        alert('Si us plau, omple tots els camps.');
-        return;
-      }
+    async enviarDatos() {
+  if (!this.nombre || !this.apellido || !this.email) {
+    alert('Si us plau, omple tots els camps.');
+    return;
+  }
 
-      const fechaHora = new Date().toLocaleString();
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!emailRegex.test(this.email)) {
+    this.errorMessage = 'L\'email introduït no és vàlid.';
+    return;
+  } else {
+    this.errorMessage = ''; 
+  }
 
-      const ticketData = {
-        peliculaId: this.peliculaId,
-        sessionTime: this.sessionTime,
-        selectedDate: this.selectedDate,
-        nombre: this.nombre,
-        apellido: this.apellido,
-        telefono: this.telefono,
-        seats: this.butaquesSeleccionades,
-        total: this.precioTotal, 
-        fechaHora: fechaHora,
-      };
+  const fechaHora = new Date().toLocaleString();
+
+  const ticketData = {
+    peliculaId: this.peliculaId,
+    sessionTime: this.sessionTime,
+    selectedDate: this.selectedDate,
+    nombre: this.nombre,
+    apellido: this.apellido,
+    email: this.email,
+    seats: this.butaquesSeleccionades,
+    total: this.precioTotal, 
+    fechaHora: fechaHora,
+  };
+
+  try {
+    const response = await fetch('http://localhost:8000/api/entradas', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(ticketData),
+    });
+
+    if (response.ok) {
+      const responseData = await response.json();
+      console.log('Entrada guardada en la base de datos:', responseData);
+      
+      Swal.fire({
+        icon: 'success',
+        title: '¡Entrada comprada correctamente!',
+        text: 'Tu compra se ha realizado con éxito.',
+        confirmButtonText: 'Aceptar',
+        background: '#f8f9fa',
+        showConfirmButton: true,
+      }).then(() => {
+        
+        this.router.push('/');
+      });
 
       let storedPurchases = JSON.parse(sessionStorage.getItem('ticketData')) || [];
-
-      if (!Array.isArray(storedPurchases)) {
-        storedPurchases = [storedPurchases];
-      }
-
-      storedPurchases = storedPurchases.filter(purchase => 
-        !(purchase.peliculaId === this.peliculaId && purchase.sessionTime === this.sessionTime)
-      );
-
       storedPurchases.push(ticketData);
       sessionStorage.setItem('ticketData', JSON.stringify(storedPurchases));
-      console.log('Datos guardados en sessionStorage:', storedPurchases);
-      this.router.push('/entradas');
+    } else {
+      this.errorMessage = 'Error al guardar la entrada en la base de datos.';
     }
+  } catch (error) {
+    console.error('Error en la solicitud:', error);
+    this.errorMessage = 'Hubo un problema al enviar los datos.';
+  }
+}
+
+
   }
 };
 </script>
@@ -200,7 +231,7 @@ h1 {
 }
 
 .butaca-amarilla {
-  background-color: yellow; /* Color de fondo amarillo para las butacas de la fila F */
+  background-color: yellow; 
 }
 
 .butaca.seleccionada {

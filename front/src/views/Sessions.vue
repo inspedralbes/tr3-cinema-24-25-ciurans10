@@ -154,7 +154,7 @@ input[type="date"], input[type="time"] {
   border-radius: 15px;
   padding: 20px;
   text-align: center;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  height: 430px;
   transition: transform 0.3s ease-in-out;
 }
 

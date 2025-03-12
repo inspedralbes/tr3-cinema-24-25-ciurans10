@@ -75,7 +75,6 @@ onMounted(fetchMovieDetails);
   align-items: flex-start;
   justify-content: center;
   gap: 20px;
-  margin-bottom: 20px;
 }
 
 .movie-title {
@@ -88,7 +87,6 @@ onMounted(fetchMovieDetails);
   width: 250px;
   height: auto;
   max-width: 100%;
-  object-fit: cover;
   margin-top: 25px;
 }
 
@@ -111,13 +109,12 @@ onMounted(fetchMovieDetails);
 }
 
 h3 {
-  color: #007BFF;
+  color: #ffffff;
   font-size: 1.2rem;
   margin-top: 10px;
 }
 
 ul {
-  list-style: none;
   padding: 0;
 }
 
@@ -129,7 +126,6 @@ li {
   color: white;
   border-radius: 25px;
   cursor: pointer;
-  transition: background 0.3s, transform 0.2s;
   font-size: 1rem;
 }
 

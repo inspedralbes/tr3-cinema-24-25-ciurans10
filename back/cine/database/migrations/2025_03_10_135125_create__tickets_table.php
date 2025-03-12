@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->string('nombre');
             $table->string('apellido');
-            $table->integer('telefono');
+            $table->string('email');
             $table->json('seats');
             $table->date('selectedDate');
             $table->string('sessionTime');

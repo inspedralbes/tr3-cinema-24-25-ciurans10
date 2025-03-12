@@ -52,8 +52,8 @@
                                 <input type="text" class="form-control" name="apellido" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Teléfono</label>
-                                <input type="text" class="form-control" name="telefono" required>
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" name="email" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Asientos</label>
@@ -88,7 +88,7 @@
                         <th>ID</th>
                         <th>Nombre</th>
                         <th>Apellido</th>
-                        <th>Teléfono</th>
+                        <th>Email</th>
                         <th>Asientos</th>
                         <th>Fecha</th>
                         <th>Horario</th>
@@ -102,7 +102,7 @@
                             <td>{{ $ticket->id }}</td>
                             <td>{{ $ticket->nombre }}</td>
                             <td>{{ $ticket->apellido }}</td>
-                            <td>{{ $ticket->telefono }}</td>
+                            <td>{{ $ticket->email }}</td>
                             <td>{{ implode(", ", json_decode($ticket->seats)) }}</td>
                             <td>{{ $ticket->selectedDate }}</td>
                             <td>{{ $ticket->sessionTime }}</td>
@@ -137,8 +137,8 @@
                                                 <input type="text" class="form-control" name="apellido" value="{{ $ticket->apellido }}" required>
                                             </div>
                                             <div class="mb-3">
-                                                <label class="form-label">Teléfono</label>
-                                                <input type="text" class="form-control" name="telefono" value="{{ $ticket->telefono }}" required>
+                                                <label class="form-label">Email</label>
+                                                <input type="email" class="form-control" name="email" value="{{ $ticket->email }}" required>
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label">Asientos</label>

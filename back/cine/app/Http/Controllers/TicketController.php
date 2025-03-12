@@ -24,7 +24,7 @@ class TicketController extends Controller
     $validatedData = $request->validate([
         'nombre' => 'required|string|max:255',
         'apellido' => 'required|string|max:255',
-        'telefono' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255',
         'seats' => 'required|array|min:1',
         'selectedDate' => 'required|date',
         'sessionTime' => 'required|string|max:255',
@@ -34,7 +34,7 @@ class TicketController extends Controller
     $ticket = new Ticket();
     $ticket->nombre = $validatedData['nombre'];
     $ticket->apellido = $validatedData['apellido'];
-    $ticket->telefono = $validatedData['telefono'];
+    $ticket->email = $validatedData['email'];
     $ticket->seats = json_encode($validatedData['seats']);
     $ticket->selectedDate = $validatedData['selectedDate'];
     $ticket->sessionTime = $validatedData['sessionTime'];
@@ -64,7 +64,7 @@ class TicketController extends Controller
         $validatedData = $request->validate([
             'nombre' => 'required|string|max:255',
             'apellido' => 'required|string|max:255',
-            'telefono' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255',
             'seats' => 'required|array|min:1',
             'selectedDate' => 'required|date',
             'sessionTime' => 'required|string|max:255',
@@ -75,7 +75,7 @@ class TicketController extends Controller
 
         $ticket->nombre = $validatedData['nombre'];
         $ticket->apellido = $validatedData['apellido'];
-        $ticket->telefono = $validatedData['telefono'];
+        $ticket->email = $validatedData['email'];
         $ticket->seats = json_encode($validatedData['seats']);
         $ticket->selectedDate = $validatedData['selectedDate'];
         $ticket->sessionTime = $validatedData['sessionTime'];
