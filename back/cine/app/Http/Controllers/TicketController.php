@@ -7,37 +7,46 @@ use App\Models\Ticket;
 
 class TicketController extends Controller
 {
+  
     public function index()
     {
-        return response()->json(Ticket::all());
+        return response()->json(Ticket::all(), 200);
     }
 
     public function mostrarTickets()
     {
-        $tickets = Ticket::all();
+        $tickets = Ticket::all();  
         return view('tickets.index', compact('tickets'));
     }
 
     public function store(Request $request)
-    {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|max:255',
-            'sesion_id' => 'required|integer|max:1',
-            'cantidad' => 'required|integer|min:1',
-            'price' => 'required|numeric|min:0',
-        ]);
+{
+    $validatedData = $request->validate([
+        'nombre' => 'required|string|max:255',
+        'apellido' => 'required|string|max:255',
+        'telefono' => 'required|string|max:255',
+        'seats' => 'required|array|min:1',
+        'selectedDate' => 'required|date',
+        'sessionTime' => 'required|string|max:255',
+        'total' => 'required|numeric',
+    ]);
 
-        $ticket = new Ticket();
-        $ticket->name = $validatedData['name'];
-        $ticket->email = $validatedData['email'];
-        $ticket->sesion_id = $validatedData['sesion_id'];
-        $ticket->cantidad = $validatedData['cantidad'];
-        $ticket->price = $validatedData['price'];
-        $ticket->save();
+    $ticket = new Ticket();
+    $ticket->nombre = $validatedData['nombre'];
+    $ticket->apellido = $validatedData['apellido'];
+    $ticket->telefono = $validatedData['telefono'];
+    $ticket->seats = json_encode($validatedData['seats']);
+    $ticket->selectedDate = $validatedData['selectedDate'];
+    $ticket->sessionTime = $validatedData['sessionTime'];
+    $ticket->total = $validatedData['total'];
+    $ticket->save();
 
-        return redirect()->route('tickets.index')->with('success', 'Ticket creado correctamente');
-    }
+    return response()->json([
+        'message' => 'Ticket creado correctamente',
+        'ticket' => $ticket
+    ], 201);
+}
+
 
     public function show($id)
     {
@@ -53,22 +62,30 @@ class TicketController extends Controller
     public function update(Request $request, $id)
     {
         $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|max:255',
-            'sesion_id' => 'required|integer|max:1',
-            'cantidad' => 'required|integer|min:1',
-            'price' => 'required|numeric|min:0',
+            'nombre' => 'required|string|max:255',
+            'apellido' => 'required|string|max:255',
+            'telefono' => 'required|string|max:255',
+            'seats' => 'required|array|min:1',
+            'selectedDate' => 'required|date',
+            'sessionTime' => 'required|string|max:255',
+            'total' => 'required|numeric',
         ]);
 
-        $ticket = Ticket::findOrFail($id);
-        $ticket->name = $validatedData['name'];
-        $ticket->email = $validatedData['email'];
-        $ticket->sesion_id = $validatedData['sesion_id'];
-        $ticket->cantidad = $validatedData['cantidad'];
-        $ticket->price = $validatedData['price'];
+        $ticket = Ticket::findOrFail($id); 
+
+        $ticket->nombre = $validatedData['nombre'];
+        $ticket->apellido = $validatedData['apellido'];
+        $ticket->telefono = $validatedData['telefono'];
+        $ticket->seats = json_encode($validatedData['seats']);
+        $ticket->selectedDate = $validatedData['selectedDate'];
+        $ticket->sessionTime = $validatedData['sessionTime'];
+        $ticket->total = $validatedData['total'];
         $ticket->save();
 
-        return redirect()->route('tickets.index')->with('success', 'Ticket actualizado correctamente');
+        return response()->json([
+            'message' => 'Ticket actualizado correctamente',
+            'ticket' => $ticket
+        ]);
     }
 
     public function destroy($id)
@@ -81,6 +98,6 @@ class TicketController extends Controller
 
         $ticket->delete();
 
-        return redirect()->route('tickets.index')->with('success', 'Ticket eliminado correctamente');
+        return response()->json(['message' => 'Ticket eliminado correctamente']);
     }
 }

@@ -45,23 +45,31 @@
                         <div class="modal-body">
                             <div class="mb-3">
                                 <label class="form-label">Nombre</label>
-                                <input type="text" class="form-control" name="name" required>
+                                <input type="text" class="form-control" name="nombre" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Correo Electrónico</label>
-                                <input type="email" class="form-control" name="email" required>
+                                <label class="form-label">Apellido</label>
+                                <input type="text" class="form-control" name="apellido" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Sesión</label>
-                                <input type="number" class="form-control" name="sesion_id" required>
+                                <label class="form-label">Teléfono</label>
+                                <input type="text" class="form-control" name="telefono" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Cantidad</label>
-                                <input type="number" class="form-control" name="cantidad" required>
+                                <label class="form-label">Asientos</label>
+                                <input type="text" class="form-control" name="seats" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Precio</label>
-                                <input type="text" class="form-control" name="price" required>
+                                <label class="form-label">Fecha</label>
+                                <input type="date" class="form-control" name="selectedDate" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Horario</label>
+                                <input type="text" class="form-control" name="sessionTime" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Total</label>
+                                <input type="number" class="form-control" name="total" required>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -79,10 +87,12 @@
                     <tr>
                         <th>ID</th>
                         <th>Nombre</th>
-                        <th>Email</th>
-                        <th>Sesión</th>
-                        <th>Cantidad</th>
-                        <th>Precio</th>
+                        <th>Apellido</th>
+                        <th>Teléfono</th>
+                        <th>Asientos</th>
+                        <th>Fecha</th>
+                        <th>Horario</th>
+                        <th>Total</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -90,11 +100,13 @@
                     @foreach($tickets as $ticket)
                         <tr>
                             <td>{{ $ticket->id }}</td>
-                            <td>{{ $ticket->name }}</td>
-                            <td>{{ $ticket->email }}</td>
-                            <td>{{ $ticket->sesion_id }}</td>
-                            <td>{{ $ticket->cantidad }}</td>
-                            <td>${{ number_format($ticket->price, 2) }}</td>
+                            <td>{{ $ticket->nombre }}</td>
+                            <td>{{ $ticket->apellido }}</td>
+                            <td>{{ $ticket->telefono }}</td>
+                            <td>{{ implode(", ", json_decode($ticket->seats)) }}</td>
+                            <td>{{ $ticket->selectedDate }}</td>
+                            <td>{{ $ticket->sessionTime }}</td>
+                            <td>${{ number_format($ticket->total, 2) }}</td>
                             <td>
                                 <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ $ticket->id }}">✏️ Editar</button>
                                 <form action="{{ route('tickets.destroy', $ticket->id) }}" method="POST" style="display:inline;">
@@ -118,23 +130,31 @@
                                         <div class="modal-body">
                                             <div class="mb-3">
                                                 <label class="form-label">Nombre</label>
-                                                <input type="text" class="form-control" name="name" value="{{ $ticket->name }}" required>
+                                                <input type="text" class="form-control" name="nombre" value="{{ $ticket->nombre }}" required>
                                             </div>
                                             <div class="mb-3">
-                                                <label class="form-label">Correo Electrónico</label>
-                                                <input type="email" class="form-control" name="email" value="{{ $ticket->email }}" required>
+                                                <label class="form-label">Apellido</label>
+                                                <input type="text" class="form-control" name="apellido" value="{{ $ticket->apellido }}" required>
                                             </div>
                                             <div class="mb-3">
-                                                <label class="form-label">Sesión</label>
-                                                <input type="number" class="form-control" name="sesion_id" value="{{ $ticket->sesion_id }}" required>
+                                                <label class="form-label">Teléfono</label>
+                                                <input type="text" class="form-control" name="telefono" value="{{ $ticket->telefono }}" required>
                                             </div>
                                             <div class="mb-3">
-                                                <label class="form-label">Cantidad</label>
-                                                <input type="number" class="form-control" name="cantidad" value="{{ $ticket->cantidad }}" required>
+                                                <label class="form-label">Asientos</label>
+                                                <input type="text" class="form-control" name="seats" value="{{ implode(", ", json_decode($ticket->seats)) }}" required>
                                             </div>
                                             <div class="mb-3">
-                                                <label class="form-label">Precio</label>
-                                                <input type="text" class="form-control" name="price" value="{{ $ticket->price }}" required>
+                                                <label class="form-label">Fecha</label>
+                                                <input type="date" class="form-control" name="selectedDate" value="{{ $ticket->selectedDate }}" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Horario</label>
+                                                <input type="text" class="form-control" name="sessionTime" value="{{ $ticket->sessionTime }}" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Total</label>
+                                                <input type="number" class="form-control" name="total" value="{{ $ticket->total }}" required>
                                             </div>
                                         </div>
                                         <div class="modal-footer">

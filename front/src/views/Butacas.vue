@@ -4,14 +4,19 @@
     <div v-for="(fila, index) in filas" :key="index" class="fila">
       <span class="fila-label">{{ fila }}</span>
       <div v-for="butaca in butacasPorFila" :key="butaca" class="butaca" 
-           :class="{ seleccionada: butaquesSeleccionades.includes(fila + butaca) }"
-           @click="toggleButaca(fila + butaca)">
+           :class="{
+             seleccionada: butaquesSeleccionades.includes(fila + butaca),
+             'butaca-amarilla': fila === 'F' 
+           }"
+           @click="toggleButaca(fila, butaca)">
         {{ butaca }}
       </div>
     </div>
     
     <div class="info-seleccio">
       Butaques seleccionades: {{ butaquesSeleccionades.join(', ') }}
+      <br/><br>
+      Preu total: {{ precioTotal }}€
     </div>
     
     <button 
@@ -44,7 +49,7 @@
 </template>
 
 <script>
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 export default {
   data() {
@@ -52,40 +57,68 @@ export default {
       filas: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'],
       butacasPorFila: 10,
       butaquesSeleccionades: [],
+      precioTotal: 0, 
       mostrarFormulario: false,
       nombre: '',
       apellido: '',
       telefono: '',
-      errorMessage: '', 
-      previousPurchase: null, 
+      errorMessage: '',
+      previousPurchase: null,
     };
   },
   setup() {
+    const route = useRoute();
     const router = useRouter();
-    return { router };
+
+    return {
+      route,
+      router,
+    };
+  },
+  computed: {
+    peliculaId() {
+      return this.route.params.movieId;
+    },
+    sessionTime() {
+      return this.route.params.sessionTime;
+    },
+    selectedDate() {
+      return this.route.params.selectedDate;
+    }
   },
   methods: {
-    toggleButaca(butaca) {
-      if (this.butaquesSeleccionades.length >= 10 && !this.butaquesSeleccionades.includes(butaca)) {
+    toggleButaca(fila, butaca) {
+     
+      const precio = fila === 'F' ? 8 : 6; 
+
+      if (this.butaquesSeleccionades.length >= 10 && !this.butaquesSeleccionades.includes(fila + butaca)) {
         alert('Només pots seleccionar fins a 10 butaques.');
         return;
       }
-      const index = this.butaquesSeleccionades.indexOf(butaca);
+      const index = this.butaquesSeleccionades.indexOf(fila + butaca);
       if (index === -1) {
-        this.butaquesSeleccionades.push(butaca);
+        this.butaquesSeleccionades.push(fila + butaca);
+        this.precioTotal += precio; 
       } else {
         this.butaquesSeleccionades.splice(index, 1);
+        this.precioTotal -= precio; 
       }
     },
     checkPreviousPurchase() {
-      const storedPurchase = JSON.parse(sessionStorage.getItem('ticketData'));
-      
-      if (storedPurchase && storedPurchase.tituloPelicula === this.tituloPelicula) {
-      
+      let storedPurchases = JSON.parse(sessionStorage.getItem('ticketData')) || [];
+
+      if (!Array.isArray(storedPurchases)) {
+        storedPurchases = [storedPurchases];
+      }
+
+      const existingPurchase = storedPurchases.find(purchase => 
+        purchase.peliculaId === this.peliculaId && purchase.sessionTime === this.sessionTime
+      );
+
+      if (existingPurchase) {
         this.errorMessage = 'Ja tens entrades per aquesta sessió.';
-        this.previousPurchase = storedPurchase;
+        this.previousPurchase = existingPurchase;
       } else {
-      
         this.errorMessage = '';
         this.previousPurchase = null;
         this.mostrarFormulario = true;
@@ -96,16 +129,34 @@ export default {
         alert('Si us plau, omple tots els camps.');
         return;
       }
-      
+
+      const fechaHora = new Date().toLocaleString();
+
       const ticketData = {
+        peliculaId: this.peliculaId,
+        sessionTime: this.sessionTime,
+        selectedDate: this.selectedDate,
         nombre: this.nombre,
         apellido: this.apellido,
         telefono: this.telefono,
         seats: this.butaquesSeleccionades,
+        total: this.precioTotal, 
+        fechaHora: fechaHora,
       };
-      
-      sessionStorage.setItem('ticketData', JSON.stringify(ticketData));
-    
+
+      let storedPurchases = JSON.parse(sessionStorage.getItem('ticketData')) || [];
+
+      if (!Array.isArray(storedPurchases)) {
+        storedPurchases = [storedPurchases];
+      }
+
+      storedPurchases = storedPurchases.filter(purchase => 
+        !(purchase.peliculaId === this.peliculaId && purchase.sessionTime === this.sessionTime)
+      );
+
+      storedPurchases.push(ticketData);
+      sessionStorage.setItem('ticketData', JSON.stringify(storedPurchases));
+      console.log('Datos guardados en sessionStorage:', storedPurchases);
       this.router.push('/entradas');
     }
   }
@@ -113,7 +164,6 @@ export default {
 </script>
 
 <style scoped>
-/* Los estilos permanecen igual */
 .contenedor {
   text-align: center;
   padding: 20px;
@@ -147,6 +197,10 @@ h1 {
   cursor: pointer;
   border: 1px solid #ccc;
   color: black;
+}
+
+.butaca-amarilla {
+  background-color: yellow; /* Color de fondo amarillo para las butacas de la fila F */
 }
 
 .butaca.seleccionada {

@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PeliController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\TicketController;
+
 
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -12,3 +14,9 @@ Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logo
 
 Route::get('/peliculas', [PeliController::class, 'index']); 
 Route::get('/pelicula/{id}', [PeliController::class, 'show']);
+
+Route::get('/entradas', [TicketController::class, 'index']); 
+Route::post('/entradas', [TicketController::class, 'store']); 
+Route::get('/entradas/{id}', [TicketController::class, 'show']); 
+Route::put('/entradas/{id}', [TicketController::class, 'update']); 
+Route::delete('/entradas/{id}', [TicketController::class, 'destroy']);
