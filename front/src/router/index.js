@@ -6,6 +6,7 @@ import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
 import Butacas from '../views/Butacas.vue';
 import Sessions from '../views/Sessions.vue';
+import Perfil from '../views/Perfil.vue';
 
 const routes = [
   { path: '/', component: Home },
@@ -30,6 +31,7 @@ const routes = [
     props: true 
   },
   { path: '/sessions', component: Sessions },
+  { path: '/perfil', component: Perfil },
 ];
 
 const router = createRouter({

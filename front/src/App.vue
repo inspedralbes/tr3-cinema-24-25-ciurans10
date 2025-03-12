@@ -9,7 +9,10 @@
           <li><router-link to="/">Inici</router-link></li>
           <li><router-link to="/cartelera">Películas</router-link></li>
           <li><router-link to="/sessions">Sessions</router-link></li>
-          <li v-if="!isLoginPage && !isRegisterPage"><router-link to="/login" class="login-button">Inicia Sesió</router-link></li>
+
+          <li v-if="!isAuthenticated"><router-link to="/login" class="login-button">Inicia Sesió</router-link></li>
+
+          <li v-if="isAuthenticated"><router-link to="/perfil" class="profile-button">Perfil</router-link></li>
         </ul>
       </nav>
     </header>
@@ -34,40 +37,28 @@
 </template>
 
 <script>
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { useRoute } from "vue-router";
 
 export default {
   setup() {
     const route = useRoute();
 
-    const selectedSeats = ref([]);
-
+    // Computado para verificar si estamos en la página de login
     const isLoginPage = computed(() => route.path === "/login");
     const isRegisterPage = computed(() => route.path === "/register");
     const isButacasPage = computed(() => route.path === "/butacas");
 
-    function selectSeat(butaca) {
-      if (selectedSeats.value.includes(butaca)) {
-        selectedSeats.value = selectedSeats.value.filter(seat => seat !== butaca);
-      } else {
-        if (selectedSeats.value.length < 10) {
-          selectedSeats.value.push(butaca);
-        }
-      }
-    }
-
-    function confirmSelection() {
-      alert(`Butaques seleccionades: ${selectedSeats.value.join(', ')}`);
-    }
+    // Computado para verificar si el usuario está autenticado
+    const isAuthenticated = computed(() => {
+      return localStorage.getItem('token') !== null;
+    });
 
     return {
       isLoginPage,
       isRegisterPage,
       isButacasPage,
-      selectedSeats,
-      selectSeat,
-      confirmSelection
+      isAuthenticated
     };
   }
 };
