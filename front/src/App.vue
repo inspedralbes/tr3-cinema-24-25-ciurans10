@@ -18,7 +18,7 @@
     </header>
 
     <main>
-      <router-view></router-view> <!-- Aquí se renderizará el componente Home -->
+      <router-view></router-view> 
     </main>
 
     <footer v-if="!isLoginPage && !isRegisterPage && !isButacasPage">

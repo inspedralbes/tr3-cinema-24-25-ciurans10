@@ -1,6 +1,27 @@
 <template>
   <div class="contenedor">
     <h1>Selecciona les teves butaques</h1>
+
+    <div class="leyenda">
+      <div class="leyenda-item">
+        <div class="color-box vermell"></div>
+        <span>Ocupades</span>
+      </div>
+      <div class="leyenda-item">
+        <div class="color-box gris"></div>
+        <span>Disponibles</span>
+      </div>
+      <div class="leyenda-item">
+        <div class="color-box verd"></div>
+        <span>Seleccionades per l'usuari</span>
+      </div>
+      <div class="leyenda-item">
+        <div class="color-box groc"></div>
+        <span>VIP</span>
+      </div>
+    </div>
+
+    <!-- Butaques -->
     <div v-for="(fila, index) in filas" :key="index" class="fila">
       <span class="fila-label">{{ fila }}</span>
       <div v-for="butaca in butacasPorFila" :key="butaca" class="butaca" 
@@ -13,18 +34,21 @@
       </div>
     </div>
     
+    <!-- Informació de selecció -->
     <div class="info-seleccio">
       Butaques seleccionades: {{ butaquesSeleccionades.join(', ') }}
       <br/><br>
       Preu total: {{ precioTotal }}€
     </div>
     
+    <!-- Botó de confirmació -->
     <button 
       :disabled="butaquesSeleccionades.length === 0" 
       @click="checkPreviousPurchase">
       Confirmar selecció
     </button>
     
+    <!-- Formulari de dades -->
     <div v-if="mostrarFormulario" class="formulario">
       <h2>Introdueix les teves dades</h2>
       <label>Nom:</label>
@@ -36,6 +60,7 @@
       <button @click="enviarDatos">Enviar</button>
     </div>
 
+    <!-- Missatge d'error -->
     <div v-if="errorMessage" class="error-message">
       <p>{{ errorMessage }}</p>
       <div v-if="previousPurchase">
@@ -211,6 +236,42 @@ export default {
 
 h1 {
   color: white;
+}
+
+.leyenda {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.leyenda-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.color-box {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ccc;
+}
+
+.vermell {
+  background-color: #ff4444; 
+}
+
+.gris {
+  background-color: #f0f0f0; 
+}
+
+.verd {
+  background-color: #4CAF50; 
+}
+
+.groc{
+  background-color: yellow;
 }
 
 .fila {
