@@ -1,24 +1,19 @@
 <template>
-  <div>
-    <h1>Bienvenidos al Cine</h1>
-    <p>¡Las mejores películas están aquí!</p>
-    <router-link to="/cartelera">Ver Cartelera</router-link> 
+  <div class="home">
+    <MovieCarousel />
+    <UpcomingMovies />
   </div>
 </template>
 
 <script setup>
+import MovieCarousel from '@/components/MovieCarousel.vue'; 
+import UpcomingMovies from '@/components/UpcomingMovies.vue'; 
 </script>
 
 <style scoped>
-
-h1 {
-  text-align: center;
-  font-size: 2.5em;
-  margin-top: 50px;
-  color: white;
-}
-
-p{
-  color:white;
+.home {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 </style>

@@ -18,7 +18,7 @@
     </header>
 
     <main>
-      <router-view></router-view>
+      <router-view></router-view> <!-- Aquí se renderizará el componente Home -->
     </main>
 
     <footer v-if="!isLoginPage && !isRegisterPage && !isButacasPage">
@@ -44,12 +44,10 @@ export default {
   setup() {
     const route = useRoute();
 
-    // Computado para verificar si estamos en la página de login
     const isLoginPage = computed(() => route.path === "/login");
     const isRegisterPage = computed(() => route.path === "/register");
     const isButacasPage = computed(() => route.path === "/butacas");
 
-    // Computado para verificar si el usuario está autenticado
     const isAuthenticated = computed(() => {
       return localStorage.getItem('token') !== null;
     });
