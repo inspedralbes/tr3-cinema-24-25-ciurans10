@@ -134,10 +134,10 @@ export default {
 
 <style scoped>
 .profile-container {
-  padding: 20px;
+  padding: 40px;
   background-color: #f4f4f4;
   border-radius: 10px;
-  max-width: 600px;
+  max-width: 900px;
   margin: auto;
   text-align: center;
 }
@@ -148,7 +148,6 @@ export default {
 }
 
 .profile-info {
-  margin-top: 20px;
   font-size: 1.2rem;
   color: #555;
 }
@@ -164,7 +163,6 @@ export default {
 .tickets-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 10px;
 }
 
 .tickets-table th, .tickets-table td {

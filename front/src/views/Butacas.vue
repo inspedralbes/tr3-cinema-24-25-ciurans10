@@ -65,6 +65,7 @@ export default {
       email: '',
       errorMessage: '',
       previousPurchase: null,
+      usuarioAutenticado: false, 
     };
   },
   setup() {
@@ -87,8 +88,24 @@ export default {
       return this.route.params.selectedDate;
     }
   },
+  created() {
+    this.verificarSesion();
+  },
   methods: {
+    verificarSesion() {
+      const token = localStorage.getItem('token');
+      this.usuarioAutenticado = !!token; 
+    },
     toggleButaca(fila, butaca) {
+      if (!this.usuarioAutenticado) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Inicia sesión',
+          text: 'Debes iniciar sesión para seleccionar butacas.',
+        });
+        return;
+      }
+
       const precio = fila === 'F' ? 8 : 6; 
 
       if (this.butaquesSeleccionades.length >= 10 && !this.butaquesSeleccionades.includes(fila + butaca)) {
@@ -125,71 +142,63 @@ export default {
       }
     },
     async enviarDatos() {
-  if (!this.nombre || !this.apellido || !this.email) {
-    alert('Si us plau, omple tots els camps.');
-    return;
-  }
+      if (!this.nombre || !this.apellido || !this.email) {
+        alert('Si us plau, omple tots els camps.');
+        return;
+      }
 
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  if (!emailRegex.test(this.email)) {
-    this.errorMessage = 'L\'email introduït no és vàlid.';
-    return;
-  } else {
-    this.errorMessage = ''; 
-  }
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailRegex.test(this.email)) {
+        this.errorMessage = 'L\'email introduït no és vàlid.';
+        return;
+      } else {
+        this.errorMessage = ''; 
+      }
 
-  const fechaHora = new Date().toLocaleString();
+      const fechaHora = new Date().toLocaleString();
 
-  const ticketData = {
-    peliculaId: this.peliculaId,
-    sessionTime: this.sessionTime,
-    selectedDate: this.selectedDate,
-    nombre: this.nombre,
-    apellido: this.apellido,
-    email: this.email,
-    seats: this.butaquesSeleccionades,
-    total: this.precioTotal, 
-    fechaHora: fechaHora,
-  };
+      const ticketData = {
+        peliculaId: this.peliculaId,
+        sessionTime: this.sessionTime,
+        selectedDate: this.selectedDate,
+        nombre: this.nombre,
+        apellido: this.apellido,
+        email: this.email,
+        seats: this.butaquesSeleccionades,
+        total: this.precioTotal, 
+        fechaHora: fechaHora,
+      };
 
-  try {
-    const response = await fetch('http://localhost:8000/api/entradas', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(ticketData),
-    });
+      try {
+        const response = await fetch('http://localhost:8000/api/entradas', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(ticketData),
+        });
 
-    if (response.ok) {
-      const responseData = await response.json();
-      console.log('Entrada guardada en la base de datos:', responseData);
-      
-      Swal.fire({
-        icon: 'success',
-        title: '¡Entrada comprada correctamente!',
-        text: 'Tu compra se ha realizado con éxito.',
-        confirmButtonText: 'Aceptar',
-        background: '#f8f9fa',
-        showConfirmButton: true,
-      }).then(() => {
-        
-        this.router.push('/');
-      });
+        if (response.ok) {
+          Swal.fire({
+            icon: 'success',
+            title: '¡Entrada comprada correctamente!',
+            text: 'Tu compra se ha realizado con éxito.',
+            confirmButtonText: 'Aceptar',
+          }).then(() => {
+            this.router.push('/');
+          });
 
-      let storedPurchases = JSON.parse(sessionStorage.getItem('ticketData')) || [];
-      storedPurchases.push(ticketData);
-      sessionStorage.setItem('ticketData', JSON.stringify(storedPurchases));
-    } else {
-      this.errorMessage = 'Error al guardar la entrada en la base de datos.';
+          let storedPurchases = JSON.parse(sessionStorage.getItem('ticketData')) || [];
+          storedPurchases.push(ticketData);
+          sessionStorage.setItem('ticketData', JSON.stringify(storedPurchases));
+        } else {
+          this.errorMessage = 'Error al guardar la entrada en la base de datos.';
+        }
+      } catch (error) {
+        console.error('Error en la solicitud:', error);
+        this.errorMessage = 'Hubo un problema al enviar los datos.';
+      }
     }
-  } catch (error) {
-    console.error('Error en la solicitud:', error);
-    this.errorMessage = 'Hubo un problema al enviar los datos.';
-  }
-}
-
-
   }
 };
 </script>
