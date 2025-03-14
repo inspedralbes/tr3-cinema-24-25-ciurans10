@@ -11,25 +11,26 @@
       <div v-for="movie in movies" :key="movie.id" class="movie-card">
         
         <router-link 
-  :to="{ 
-    name: 'DetallesPeli', 
-    params: { 
-      movieId: movie.id, 
-      title: encodeURIComponent(movie.title), 
-      posterPath: encodeURIComponent(movie.poster_path) 
-    } 
-  }"
-  class="image-link"
->
-  <img 
-    :src="'https://image.tmdb.org/t/p/w500' + movie.poster_path" 
-    :alt="movie.title" 
-    class="movie-image"
-  >
-  </router-link>
+          :to="{ 
+            name: 'DetallesPeli', 
+            params: { 
+              movieId: movie.id, 
+              title: encodeURIComponent(movie.title), 
+              posterPath: encodeURIComponent(movie.poster_path),
+              selectedDate: selectedDate
+            } 
+          }"
+          class="image-link">
+          <img 
+            :src="'https://image.tmdb.org/t/p/w500' + movie.poster_path" 
+            :alt="movie.title" 
+            class="movie-image"
+          >
+        </router-link>
 
-
-        <h2>{{ movie.title }}</h2>
+        <h2>{{ movie.title }}</h2>  
+        <h3 v-if="isWednesday(selectedDate)">¡Es día del espectador!</h3>
+        
       </div>
     </div>
 
@@ -43,9 +44,10 @@ export default {
     return {
       allMovies: [],
       movies: [],
-      selectedDate: new Date().toISOString().split('T')[0],
+      selectedDate: this.$route.params.selectedDate || new Date().toISOString().split('T')[0],
     };
   },
+  
   methods: {
     async fetchMoviesFromDatabase() {
       try {
@@ -64,10 +66,7 @@ export default {
     },
 
     updateMoviesForDate() {
-      this.movies = this.getMoviesForDate(this.selectedDate).map(movie => ({
-        ...movie,
-        sessions: this.generateSessions(),
-      }));
+      this.movies = this.getMoviesForDate(this.selectedDate);
     },
 
     getMoviesForDate(date) {
@@ -75,7 +74,7 @@ export default {
 
       const totalMovies = this.allMovies.length;
       const dateOffset = this.calculateDateOffset(date);
-      const startIndex = (dateOffset * 3) % totalMovies; 
+      const startIndex = (dateOffset * 3) % totalMovies;
 
       return this.allMovies.slice(startIndex, startIndex + 3);
     },
@@ -87,29 +86,16 @@ export default {
       return diffInDays;
     },
 
-    generateSessions() {
-      return ["16:00", "18:00", "20:00"];
-    },
-
-    selectSession(movie, session) {
-      this.$router.push({
-        name: 'Butacas',
-        params: {
-          movieId: movie.id,
-          title: movie.title,
-          sessionTime: session,
-          selectedDate: this.selectedDate,
-          posterPath: movie.poster_path
-        }
-      });
-    },
+    isWednesday(date) {
+      const selectedDate = new Date(date);
+      return selectedDate.getDay() === 3; 
+    }
   },
   mounted() {
     this.fetchMoviesFromDatabase();
   }
 };
 </script>
-
 
 <style scoped>
 .container {
@@ -125,7 +111,7 @@ h1 {
   margin-bottom: 20px;
 }
 
-.date-picker, .time-picker {
+.date-picker {
   margin-bottom: 20px;
   color: white;
 }
@@ -136,7 +122,7 @@ label {
   font-weight: bold;
 }
 
-input[type="date"], input[type="time"] {
+input[type="date"] {
   padding: 10px;
   font-size: 1.1rem;
   border: 1px solid #ccc;
@@ -154,7 +140,7 @@ input[type="date"], input[type="time"] {
   border-radius: 15px;
   padding: 20px;
   text-align: center;
-  height: 430px;
+  max-height: 500px;
   transition: transform 0.3s ease-in-out;
 }
 
@@ -174,30 +160,8 @@ h2 {
 }
 
 h3 {
-  color: #007BFF;
-  font-size: 1.2rem;
-  margin-top: 10px;
-}
-
-ul {
-  list-style: none;
-  padding: 0;
-}
-
-li {
-  display: inline-block;
-  margin: 8px;
-  padding: 10px 14px;
-  background: #007BFF;
-  color: white;
-  border-radius: 25px;
-  cursor: pointer;
-  transition: background 0.3s, transform 0.2s;
-  font-size: 1rem;
-}
-
-li:hover {
-  background: #0056b3;
-  transform: scale(1.1);
+  color: #28a745;
+  font-size: 1.3rem;
+  margin-top: 15px;
 }
 </style>
