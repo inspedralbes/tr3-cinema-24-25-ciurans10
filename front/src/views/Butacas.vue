@@ -188,59 +188,71 @@ export default {
       }
     },
     async enviarDatos() {
-      if (!this.nombre || !this.apellido || !this.email) {
-        alert('Si us plau, omple tots els camps.');
-        return;
-      }
+  if (!this.nombre || !this.apellido || !this.email) {
+    alert('Si us plau, omple tots els camps.');
+    return;
+  }
 
-      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-      if (!emailRegex.test(this.email)) {
-        this.errorMessage = 'L\'email introduït no és vàlid.';
-        return;
-      } else {
-        this.errorMessage = ''; 
-      }
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!emailRegex.test(this.email)) {
+    this.errorMessage = 'L\'email introduït no és vàlid.';
+    return;
+  } else {
+    this.errorMessage = ''; 
+  }
 
-      const fechaHora = new Date().toLocaleString();
+  const fechaHora = new Date().toLocaleString();
 
-      const ticketData = {
-        peliculaId: this.peliculaId,
-        sessionTime: this.sessionTime,
-        selectedDate: this.selectedDate,
-        nombre: this.nombre,
-        apellido: this.apellido,
-        email: this.email,
-        seats: this.butaquesSeleccionades,
-        total: this.precioTotal, 
-        fechaHora: fechaHora,
-      };
+  const ticketData = {
+    peliculaId: this.peliculaId,
+    sessionTime: this.sessionTime,
+    selectedDate: this.selectedDate,
+    nombre: this.nombre,
+    apellido: this.apellido,
+    email: this.email,
+    seats: this.butaquesSeleccionades,
+    total: this.precioTotal, 
+    fechaHora: fechaHora,
+  };
 
-      try {
-        const response = await fetch('http://localhost:8000/api/entradas', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(ticketData),
-        });
+  const token = localStorage.getItem('token'); 
 
-        if (response.ok) {
-          Swal.fire({
-            icon: 'success',
-            title: '¡Entrada comprada correctamente!',
-            text: 'Tu compra se ha realizado con éxito.',
-            confirmButtonText: 'Aceptar',
-          }).then(() => {
-            this.router.push('/');
-          });
-        } else {
-          this.errorMessage = 'Error al guardar la entrada en la base de datos.';
-        }
-      } catch (error) {
-        console.error('Error en la solicitud:', error);
-        this.errorMessage = 'Hubo un problema al enviar los datos.';
-      }
+  if (!token) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'No estás autenticado. Por favor, inicia sesión.',
+    });
+    return;
+  }
+
+  try {
+    const response = await fetch('http://localhost:8000/api/entradas', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(ticketData),
+    });
+
+    if (response.ok) {
+      Swal.fire({
+        icon: 'success',
+        title: '¡Entrada comprada correctamente!',
+        text: 'Tu compra se ha realizado con éxito.',
+        confirmButtonText: 'Aceptar',
+      }).then(() => {
+        this.router.push('/');
+      });
+    } else {
+      this.errorMessage = 'Error al guardar la entrada en la base de datos.';
     }
+  } catch (error) {
+    console.error('Error en la solicitud:', error);
+    this.errorMessage = 'Hubo un problema al enviar los datos.';
+  }
+}
   }
 };
 </script>

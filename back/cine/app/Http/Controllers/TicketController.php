@@ -8,9 +8,12 @@ use App\Models\Ticket;
 class TicketController extends Controller
 {
   
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Ticket::all(), 200);
+    $user = $request->user(); 
+    $tickets = Ticket::where('email', $user->email)->get();
+
+    return response()->json($tickets, 200);
     }
 
     public function mostrarTickets()
@@ -45,7 +48,7 @@ class TicketController extends Controller
     $ticket = new Ticket();
     $ticket->nombre = $validatedData['nombre'];
     $ticket->apellido = $validatedData['apellido'];
-    $ticket->email = $validatedData['email'];
+    $ticket->email = $request->user()->email;
     $ticket->seats = json_encode($validatedData['seats']);
     $ticket->selectedDate = $validatedData['selectedDate'];
     $ticket->sessionTime = $validatedData['sessionTime'];
@@ -59,56 +62,56 @@ class TicketController extends Controller
     }
 
 
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        $ticket = Ticket::find($id);
+    $user = $request->user();
+    $ticket = Ticket::where('id', $id)->where('email', $user->email)->first();
 
-        if (!$ticket) {
-            return response()->json(['error' => 'Ticket no encontrado'], 404);
-        }
-
-        return response()->json($ticket);
+    if (!$ticket) {
+        return response()->json(['error' => 'Ticket no encontrado o no autorizado'], 403);
     }
+
+    return response()->json($ticket);
+    }
+
 
     public function update(Request $request, $id)
-    {
-        $validatedData = $request->validate([
-            'nombre' => 'required|string|max:255',
-            'apellido' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255',
-            'seats' => 'required|array|min:1',
-            'selectedDate' => 'required|date',
-            'sessionTime' => 'required|string|max:255',
-            'total' => 'required|numeric',
-        ]);
+{
+    $user = $request->user();
+    $ticket = Ticket::where('id', $id)->where('email', $user->email)->first();
 
-        $ticket = Ticket::findOrFail($id); 
-
-        $ticket->nombre = $validatedData['nombre'];
-        $ticket->apellido = $validatedData['apellido'];
-        $ticket->email = $validatedData['email'];
-        $ticket->seats = json_encode($validatedData['seats']);
-        $ticket->selectedDate = $validatedData['selectedDate'];
-        $ticket->sessionTime = $validatedData['sessionTime'];
-        $ticket->total = $validatedData['total'];
-        $ticket->save();
-
-        return response()->json([
-            'message' => 'Ticket actualizado correctamente',
-            'ticket' => $ticket
-        ]);
+    if (!$ticket) {
+        return response()->json(['error' => 'No autorizado para modificar este ticket'], 403);
     }
 
-    public function destroy($id)
-    {
-        $ticket = Ticket::find($id);
+    $validatedData = $request->validate([
+        'seats' => 'required|array|min:1',
+        'selectedDate' => 'required|date',
+        'sessionTime' => 'required|string|max:255',
+        'total' => 'required|numeric',
+    ]);
 
-        if (!$ticket) {
-            return response()->json(['error' => 'Ticket no encontrado'], 404);
-        }
+    $ticket->seats = json_encode($validatedData['seats']);
+    $ticket->selectedDate = $validatedData['selectedDate'];
+    $ticket->sessionTime = $validatedData['sessionTime'];
+    $ticket->total = $validatedData['total'];
+    $ticket->save();
 
-        $ticket->delete();
+    return response()->json(['message' => 'Ticket actualizado correctamente', 'ticket' => $ticket]);
+}
 
-        return response()->json(['message' => 'Ticket eliminado correctamente']);
+public function destroy(Request $request, $id)
+{
+    $user = $request->user();
+    $ticket = Ticket::where('id', $id)->where('email', $user->email)->first();
+
+    if (!$ticket) {
+        return response()->json(['error' => 'No autorizado para eliminar este ticket'], 403);
     }
+
+    $ticket->delete();
+
+    return response()->json(['message' => 'Ticket eliminado correctamente']);
+}
+
 }

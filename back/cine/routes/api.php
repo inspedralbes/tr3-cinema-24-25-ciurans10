@@ -15,10 +15,13 @@ Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logo
 Route::get('/peliculas', [PeliController::class, 'index']); 
 Route::get('/pelicula/{id}', [PeliController::class, 'show']);
 
-Route::get('/entradas', [TicketController::class, 'index']); 
-Route::post('/entradas', [TicketController::class, 'store']); 
-Route::get('/entradas/{id}', [TicketController::class, 'show']); 
-Route::put('/entradas/{id}', [TicketController::class, 'update']); 
-Route::delete('/entradas/{id}', [TicketController::class, 'destroy']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/entradas', [TicketController::class, 'index']);
+    Route::post('/entradas', [TicketController::class, 'store']);
+    Route::get('/entradas/{id}', [TicketController::class, 'show']);
+    Route::put('/entradas/{id}', [TicketController::class, 'update']);
+    Route::delete('/entradas/{id}', [TicketController::class, 'destroy']);
+});
+
 
 Route::get('/butacas-ocupadas', [TicketController::class, 'obtenerButacasOcupadas']);
