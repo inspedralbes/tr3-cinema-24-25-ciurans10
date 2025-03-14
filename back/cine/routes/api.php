@@ -20,3 +20,5 @@ Route::post('/entradas', [TicketController::class, 'store']);
 Route::get('/entradas/{id}', [TicketController::class, 'show']); 
 Route::put('/entradas/{id}', [TicketController::class, 'update']); 
 Route::delete('/entradas/{id}', [TicketController::class, 'destroy']);
+
+Route::get('/butacas-ocupadas', [TicketController::class, 'obtenerButacasOcupadas']);

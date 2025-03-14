@@ -27,13 +27,14 @@
       <div v-for="butaca in butacasPorFila" :key="butaca" class="butaca" 
            :class="{
              seleccionada: butaquesSeleccionades.includes(fila + butaca),
+             ocupada: butacasOcupadas.includes(fila + butaca),
              'butaca-amarilla': fila === 'F' 
            }"
            @click="toggleButaca(fila, butaca)">
         {{ butaca }}
       </div>
     </div>
-    
+
     <!-- Informació de selecció -->
     <div class="info-seleccio">
       Butaques seleccionades: {{ butaquesSeleccionades.join(', ') }}
@@ -41,7 +42,6 @@
       Preu total: {{ precioTotal }}€
     </div>
     
-    <!-- Botó de confirmació -->
     <button 
       :disabled="butaquesSeleccionades.length === 0" 
       @click="checkPreviousPurchase">
@@ -49,7 +49,7 @@
     </button>
     
     <!-- Formulari de dades -->
-    <div v-if="mostrarFormulario" class="formulario">
+    <div v-if="mostrarFormulario" class="formulario"> 
       <h2>Introdueix les teves dades</h2>
       <label>Nom:</label>
       <input type="text" v-model="nombre" placeholder="El teu nom" />
@@ -60,7 +60,6 @@
       <button @click="enviarDatos">Enviar</button>
     </div>
 
-    <!-- Missatge d'error -->
     <div v-if="errorMessage" class="error-message">
       <p>{{ errorMessage }}</p>
       <div v-if="previousPurchase">
@@ -83,6 +82,7 @@ export default {
       filas: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'],
       butacasPorFila: 10,
       butaquesSeleccionades: [],
+      butacasOcupadas: [],
       precioTotal: 0, 
       mostrarFormulario: false,
       nombre: '',
@@ -115,13 +115,33 @@ export default {
   },
   created() {
     this.verificarSesion();
+    this.cargarButacasOcupadas();
   },
   methods: {
+    async cargarButacasOcupadas() {
+      try {
+        const response = await fetch('http://localhost:8000/api/butacas-ocupadas');
+        if (response.ok) {
+          const data = await response.json();
+          this.butacasOcupadas = data.ocupadas || [];
+        } else {
+          console.error('Error al cargar las butacas ocupadas');
+        }
+      } catch (error) {
+        console.error('Error en la solicitud de butacas ocupadas:', error);
+      }
+    },
     verificarSesion() {
       const token = localStorage.getItem('token');
       this.usuarioAutenticado = !!token; 
     },
     toggleButaca(fila, butaca) {
+      const butacaId = fila + butaca;
+
+      if (this.butacasOcupadas.includes(butacaId)) {
+        return; 
+      }
+
       if (!this.usuarioAutenticado) {
         Swal.fire({
           icon: 'warning',
@@ -131,19 +151,20 @@ export default {
         return;
       }
 
-      const precio = fila === 'F' ? 8 : 6; 
+      const precio = fila === 'F' ? 8 : 6;
 
-      if (this.butaquesSeleccionades.length >= 10 && !this.butaquesSeleccionades.includes(fila + butaca)) {
+      if (this.butaquesSeleccionades.length >= 10 && !this.butaquesSeleccionades.includes(butacaId)) {
         alert('Només pots seleccionar fins a 10 butaques.');
         return;
       }
-      const index = this.butaquesSeleccionades.indexOf(fila + butaca);
+
+      const index = this.butaquesSeleccionades.indexOf(butacaId);
       if (index === -1) {
-        this.butaquesSeleccionades.push(fila + butaca);
-        this.precioTotal += precio; 
+        this.butaquesSeleccionades.push(butacaId);
+        this.precioTotal += precio;
       } else {
         this.butaquesSeleccionades.splice(index, 1);
-        this.precioTotal -= precio; 
+        this.precioTotal -= precio;
       }
     },
     checkPreviousPurchase() {
@@ -212,10 +233,6 @@ export default {
           }).then(() => {
             this.router.push('/');
           });
-
-          let storedPurchases = JSON.parse(sessionStorage.getItem('ticketData')) || [];
-          storedPurchases.push(ticketData);
-          sessionStorage.setItem('ticketData', JSON.stringify(storedPurchases));
         } else {
           this.errorMessage = 'Error al guardar la entrada en la base de datos.';
         }
@@ -227,6 +244,7 @@ export default {
   }
 };
 </script>
+
 
 <style scoped>
 .contenedor {
@@ -307,6 +325,10 @@ h1 {
 .butaca.seleccionada {
   background-color: #4CAF50;
   color: white;
+}
+
+.butaca.ocupada{
+  background-color: #ff4444 
 }
 
 .info-seleccio {

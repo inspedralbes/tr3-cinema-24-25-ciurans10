@@ -1,13 +1,13 @@
 <template>
   <div class="home">
-    <MovieCarousel />
-    <UpcomingMovies />
+    <CarruselPelis />
+    <ProximasPelis />
   </div>
 </template>
 
 <script setup>
-import MovieCarousel from '@/components/MovieCarousel.vue'; 
-import UpcomingMovies from '@/components/UpcomingMovies.vue'; 
+import CarruselPelis from '@/components/CarruselPelis.vue'; 
+import ProximasPelis from '@/components/ProximasPelis.vue'; 
 </script>
 
 <style scoped>

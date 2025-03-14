@@ -19,8 +19,19 @@ class TicketController extends Controller
         return view('tickets.index', compact('tickets'));
     }
 
+    public function obtenerButacasOcupadas()
+    {
+    $butacasOcupadas = Ticket::all()->flatMap(function ($ticket) {
+        return json_decode($ticket->seats, true);
+    })->unique()->values();
+
+    return response()->json([
+        'ocupadas' => $butacasOcupadas
+    ]);
+    }
+
     public function store(Request $request)
-{
+    {
     $validatedData = $request->validate([
         'nombre' => 'required|string|max:255',
         'apellido' => 'required|string|max:255',
@@ -45,7 +56,7 @@ class TicketController extends Controller
         'message' => 'Ticket creado correctamente',
         'ticket' => $ticket
     ], 201);
-}
+    }
 
 
     public function show($id)
