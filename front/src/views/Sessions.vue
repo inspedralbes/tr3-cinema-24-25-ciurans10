@@ -17,7 +17,7 @@
               movieId: movie.id, 
               title: encodeURIComponent(movie.title), 
               posterPath: encodeURIComponent(movie.poster_path),
-              selectedDate: selectedDate
+              selectedDate: selectedDate 
             } 
           }"
           class="image-link">
@@ -44,7 +44,7 @@ export default {
     return {
       allMovies: [],
       movies: [],
-      selectedDate: this.$route.params.selectedDate || new Date().toISOString().split('T')[0],
+      selectedDate: new Date().toISOString().split('T')[0],
     };
   },
   

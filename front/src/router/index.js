@@ -12,13 +12,14 @@ const routes = [
   { path: '/', component: Home },
   { path: '/cartelera', component: Cartelera },
   { 
-    path: '/pelicula/:movieId/:title/:posterPath', 
+    path: '/pelicula/:movieId/:title/:posterPath/:selectedDate?', 
     name: 'DetallesPeli', 
     component: DetallesPeli,
     props: route => ({
       movieId: route.params.movieId,
       title: decodeURIComponent(route.params.title),
       posterPath: decodeURIComponent(route.params.posterPath),
+      selectedDate: route.params.selectedDate
     })
   },
   { path: '/login', component: Login },

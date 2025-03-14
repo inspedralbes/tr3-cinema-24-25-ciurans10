@@ -5,7 +5,7 @@
         <div v-for="(movie, index) in movies.slice(0, 3)" :key="index" class="movie-card">
           <img :src="movie.image" :alt="movie.title" />
           <h3>{{ movie.title }}</h3>
-          <p>{{ movie.release_date }}</p> <!-- Fecha de estreno -->
+          <p>{{ movie.release_date }}</p> 
         </div>
       </div>
     </div>
@@ -16,19 +16,19 @@
   
   const movies = ref([
     {
+      title: "Minecraft",
+      image: "/minecraft.webp", 
+      release_date: "04-04-2025",
+    },
+    {
       title: "Avatar 3",
       image: "/avatar.jpg", 
-      release_date: "2025-11-15", 
+      release_date: "19-12-2025", 
     },
     {
       title: "Shrek 5",
       image: "/shrek.jpg",
-      release_date: "2025-12-01",
-    },
-    {
-      title: "Minecraft",
-      image: "/minecraft.webp", 
-      release_date: "2025-01-10",
+      release_date: "01-07-2026",
     },
   ]);
   </script>
@@ -49,8 +49,8 @@
   
   .movies-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* Tres columnas */
-    gap: 20px; /* Espacio entre las películas */
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 20px; 
     max-width: 1200px;
     margin: 0 auto;
   }

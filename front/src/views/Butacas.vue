@@ -2,6 +2,11 @@
   <div class="contenedor">
     <h1>Selecciona les teves butaques</h1>
 
+    <!-- Mensaje del día del espectador -->
+    <div v-if="esDiaDelEspectador()" class="dia-espectador">
+      <p>¡Avui és dia del espectador! Preus reduïts: 4€ (normals) i 6€ (VIP).</p>
+    </div>
+
     <div class="leyenda">
       <div class="leyenda-item">
         <div class="color-box vermell"></div>
@@ -83,14 +88,14 @@ export default {
       butacasPorFila: 10,
       butaquesSeleccionades: [],
       butacasOcupadas: [],
-      precioTotal: 0, 
+      precioTotal: 0,
       mostrarFormulario: false,
       nombre: '',
       apellido: '',
       email: '',
       errorMessage: '',
       previousPurchase: null,
-      usuarioAutenticado: false, 
+      usuarioAutenticado: false,
     };
   },
   setup() {
@@ -133,13 +138,13 @@ export default {
     },
     verificarSesion() {
       const token = localStorage.getItem('token');
-      this.usuarioAutenticado = !!token; 
+      this.usuarioAutenticado = !!token;
     },
     toggleButaca(fila, butaca) {
       const butacaId = fila + butaca;
 
       if (this.butacasOcupadas.includes(butacaId)) {
-        return; 
+        return;
       }
 
       if (!this.usuarioAutenticado) {
@@ -151,7 +156,11 @@ export default {
         return;
       }
 
-      const precio = this.esDiaDelEspectador() && fila !== 'F' ? 4 : (fila === 'F' ? 8 : 6);
+      // Precios según el día del espectador
+      const precioNormal = this.esDiaDelEspectador() ? 4 : 6; // 4€ si es miércoles, 6€ si no
+      const precioVIP = this.esDiaDelEspectador() ? 6 : 8;   // 6€ si es miércoles, 8€ si no
+
+      const precio = fila === 'F' ? precioVIP : precioNormal;
 
       if (this.butaquesSeleccionades.length >= 10 && !this.butaquesSeleccionades.includes(butacaId)) {
         alert('Només pots seleccionar fins a 10 butaques.');
@@ -168,12 +177,10 @@ export default {
       }
     },
     checkPreviousPurchase() {
-      let storedPurchases = JSON.parse(sessionStorage.getItem('ticketData')) || [];
+      // Obtener las compras almacenadas en localStorage
+      const storedPurchases = JSON.parse(localStorage.getItem('ticketData')) || [];
 
-      if (!Array.isArray(storedPurchases)) {
-        storedPurchases = [storedPurchases];
-      }
-
+      // Buscar si ya existe una compra para esta película y sesión
       const existingPurchase = storedPurchases.find(purchase => 
         purchase.peliculaId === this.peliculaId && purchase.sessionTime === this.sessionTime
       );
@@ -198,7 +205,7 @@ export default {
         this.errorMessage = 'L\'email introduït no és vàlid.';
         return;
       } else {
-        this.errorMessage = ''; 
+        this.errorMessage = '';
       }
 
       const fechaHora = new Date().toLocaleString();
@@ -211,11 +218,11 @@ export default {
         apellido: this.apellido,
         email: this.email,
         seats: this.butaquesSeleccionades,
-        total: this.precioTotal, 
+        total: this.precioTotal,
         fechaHora: fechaHora,
       };
 
-      const token = localStorage.getItem('token'); 
+      const token = localStorage.getItem('token');
 
       if (!token) {
         Swal.fire({
@@ -225,7 +232,7 @@ export default {
         });
         return;
       }
-      
+
       try {
         const response = await fetch('http://localhost:8000/api/entradas', {
           method: 'POST',
@@ -237,6 +244,11 @@ export default {
         });
 
         if (response.ok) {
+          // Guardar la compra en localStorage
+          const storedPurchases = JSON.parse(localStorage.getItem('ticketData')) || [];
+          storedPurchases.push(ticketData);
+          localStorage.setItem('ticketData', JSON.stringify(storedPurchases));
+
           Swal.fire({
             icon: 'success',
             title: '¡Entrada comprada correctamente!',
@@ -253,10 +265,9 @@ export default {
         this.errorMessage = 'Hubo un problema al enviar los datos.';
       }
     },
-
     esDiaDelEspectador() {
       const selectedDate = new Date(this.selectedDate);
-      return selectedDate.getDay() === 3; 
+      return selectedDate.getDay() === 3; // 3 = miércoles
     },
   }
 };
@@ -402,5 +413,13 @@ button:hover {
   color: #721c24;
   border-radius: 10px;
   margin-top: 20px;
+}
+
+.dia-espectador {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 20px;
 }
 </style>

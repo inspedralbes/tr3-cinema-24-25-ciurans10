@@ -31,7 +31,8 @@ const route = useRoute();
 const router = useRouter();
 
 const movieId = route.params.movieId;
-const title = decodeURIComponent(route.params.title); 
+const title = decodeURIComponent(route.params.title);
+const selectedDate = route.params.selectedDate;
 const movie = ref(null);
 const sessions = ref(["16:00", "18:00", "20:00"]);
 
@@ -49,13 +50,13 @@ const fetchMovieDetails = async () => {
 };
 
 const selectSession = (session) => {
-  const selectedDate = new Date().toISOString().split('T')[0]; 
+  
   router.push({
     name: 'Butacas',
     params: {
       movieId,
       sessionTime: session,
-      selectedDate
+      selectedDate 
     }
   });
 };
