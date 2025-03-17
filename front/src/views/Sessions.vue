@@ -3,34 +3,43 @@
     <h1>Properes Sessions</h1>
 
     <div class="date-picker">
-      <label for="sessionDate">Selecciona una fecha:</label>
-      <input type="date" id="sessionDate" v-model="selectedDate" @change="updateMoviesForDate">
+      <div class="week-picker">
+        <div class="week-days">
+          <button
+            v-for="day in weekDays"
+            :key="day.date"
+            :class="{ active: isSelected(day.date) }"
+            @click="selectDate(day.date)"
+          >
+            {{ day.day }} {{ day.date.split('-')[2] }}
+          </button>
+        </div>
+      </div>
     </div>
 
     <div v-if="movies.length" class="movies-grid">
       <div v-for="movie in movies" :key="movie.id" class="movie-card">
-        
-        <router-link 
-          :to="{ 
-            name: 'DetallesPeli', 
-            params: { 
-              movieId: movie.id, 
-              title: encodeURIComponent(movie.title), 
+        <router-link
+          :to="{
+            name: 'DetallesPeli',
+            params: {
+              movieId: movie.id,
+              title: encodeURIComponent(movie.title),
               posterPath: encodeURIComponent(movie.poster_path),
-              selectedDate: selectedDate 
-            } 
+              selectedDate: selectedDate,
+            },
           }"
-          class="image-link">
-          <img 
-            :src="'https://image.tmdb.org/t/p/w500' + movie.poster_path" 
-            :alt="movie.title" 
+          class="image-link"
+        >
+          <img
+            :src="'https://image.tmdb.org/t/p/w500' + movie.poster_path"
+            :alt="movie.title"
             class="movie-image"
-          >
+          />
         </router-link>
 
-        <h2>{{ movie.title }}</h2>  
+        <h2>{{ movie.title }}</h2>
         <h3 v-if="isWednesday(selectedDate)">¡Es día del espectador!</h3>
-        
       </div>
     </div>
 
@@ -45,9 +54,25 @@ export default {
       allMovies: [],
       movies: [],
       selectedDate: new Date().toISOString().split('T')[0],
+      currentWeekStart: this.getStartOfWeek(new Date()),
     };
   },
-  
+
+  computed: {
+    weekDays() {
+      const days = [];
+      for (let i = 0; i < 7; i++) {
+        const date = new Date(this.currentWeekStart);
+        date.setDate(date.getDate() + i);
+        days.push({
+          date: date.toISOString().split('T')[0],
+          day: date.toLocaleDateString('es-ES', { weekday: 'short' }),
+        });
+      }
+      return days;
+    },
+  },
+
   methods: {
     async fetchMoviesFromDatabase() {
       try {
@@ -80,7 +105,7 @@ export default {
     },
 
     calculateDateOffset(date) {
-      const baseDate = new Date("2025-03-01");
+      const baseDate = new Date('2025-03-01');
       const currentDate = new Date(date);
       const diffInDays = Math.floor((currentDate - baseDate) / (1000 * 60 * 60 * 24));
       return diffInDays;
@@ -88,12 +113,30 @@ export default {
 
     isWednesday(date) {
       const selectedDate = new Date(date);
-      return selectedDate.getDay() === 3; 
-    }
+      return selectedDate.getDay() === 3;
+    },
+
+    getStartOfWeek(date) {
+      const startOfWeek = new Date(date);
+      const dayOfWeek = date.getDay(); 
+      const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1; 
+      startOfWeek.setDate(date.getDate() - diff);
+      return startOfWeek;
+    },
+
+    selectDate(date) {
+      this.selectedDate = date;
+      this.updateMoviesForDate();
+    },
+
+    isSelected(date) {
+      return this.selectedDate === date;
+    },
   },
+
   mounted() {
     this.fetchMoviesFromDatabase();
-  }
+  },
 };
 </script>
 
@@ -122,11 +165,29 @@ label {
   font-weight: bold;
 }
 
-input[type="date"] {
+.week-picker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.week-days {
+  display: flex;
+  gap: 10px;
+}
+
+.week-days button {
   padding: 10px;
-  font-size: 1.1rem;
   border: 1px solid #ccc;
   border-radius: 5px;
+  background: white;
+  cursor: pointer;
+}
+
+.week-days button.active {
+  background: #28a745;
+  color: white;
 }
 
 .movies-grid {
