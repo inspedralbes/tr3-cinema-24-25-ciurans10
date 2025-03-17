@@ -33,6 +33,26 @@ class TicketController extends Controller
     ]);
     }
 
+    public function verificarCompra(Request $request)
+    {
+    $validatedData = $request->validate([
+        'peliculaId' => 'required|integer',
+        'sessionTime' => 'required|string|max:255',
+    ]);
+
+    $user = $request->user();
+
+    $existingTicket = Ticket::where('email', $user->email)
+                            ->where('sessionTime', $validatedData['sessionTime'])
+                            ->where('peliculaId', $validatedData['peliculaId'])
+                            ->first();
+
+    return response()->json([
+        'existeCompra' => $existingTicket !== null,
+        'compra' => $existingTicket,
+    ]);
+    }
+
     public function store(Request $request)
     {
     $validatedData = $request->validate([
@@ -43,6 +63,7 @@ class TicketController extends Controller
         'selectedDate' => 'required|date',
         'sessionTime' => 'required|string|max:255',
         'total' => 'required|numeric',
+        'peliculaId' => 'required|integer'
     ]);
 
     $ticket = new Ticket();
@@ -53,6 +74,7 @@ class TicketController extends Controller
     $ticket->selectedDate = $validatedData['selectedDate'];
     $ticket->sessionTime = $validatedData['sessionTime'];
     $ticket->total = $validatedData['total'];
+    $ticket->peliculaId = $validatedData['peliculaId'];
     $ticket->save();
 
     return response()->json([

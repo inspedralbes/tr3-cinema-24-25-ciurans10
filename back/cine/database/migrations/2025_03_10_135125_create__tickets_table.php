@@ -14,8 +14,9 @@ return new class extends Migration {
             $table->string('email');
             $table->json('seats');
             $table->date('selectedDate');
-            $table->string('sessionTime');
+            $table->string('sessionTime');  
             $table->decimal('total', 8, 2);
+            $table->unsignedBigInteger('peliculaId');
             $table->timestamps();
         });
     }

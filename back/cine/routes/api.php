@@ -21,6 +21,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/entradas/{id}', [TicketController::class, 'show']);
     Route::put('/entradas/{id}', [TicketController::class, 'update']);
     Route::delete('/entradas/{id}', [TicketController::class, 'destroy']);
+    Route::post('/verificar-compra', [TicketController::class, 'verificarCompra']);
 });
 
 

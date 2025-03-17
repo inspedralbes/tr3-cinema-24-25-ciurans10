@@ -156,9 +156,8 @@ export default {
         return;
       }
 
-      // Precios según el día del espectador
-      const precioNormal = this.esDiaDelEspectador() ? 4 : 6; // 4€ si es miércoles, 6€ si no
-      const precioVIP = this.esDiaDelEspectador() ? 6 : 8;   // 6€ si es miércoles, 8€ si no
+      const precioNormal = this.esDiaDelEspectador() ? 4 : 6;
+      const precioVIP = this.esDiaDelEspectador() ? 6 : 8;
 
       const precio = fila === 'F' ? precioVIP : precioNormal;
 
@@ -176,24 +175,54 @@ export default {
         this.precioTotal -= precio;
       }
     },
-    checkPreviousPurchase() {
-      // Obtener las compras almacenadas en localStorage
-      const storedPurchases = JSON.parse(localStorage.getItem('ticketData')) || [];
+    async checkPreviousPurchase() {
+  try {
+    const token = localStorage.getItem('token');
 
-      // Buscar si ya existe una compra para esta película y sesión
-      const existingPurchase = storedPurchases.find(purchase => 
-        purchase.peliculaId === this.peliculaId && purchase.sessionTime === this.sessionTime
-      );
+    if (!token) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Inicia sesión',
+        text: 'Debes iniciar sesión para seleccionar butacas.',
+      });
+      return;
+    }
 
-      if (existingPurchase) {
+    const response = await fetch('http://localhost:8000/api/verificar-compra', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        peliculaId: this.peliculaId,
+        sessionTime: this.sessionTime,
+      }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+
+      if (data.existeCompra) {
         this.errorMessage = 'Ja tens entrades per aquesta sessió.';
-        this.previousPurchase = existingPurchase;
+        
+        if (typeof data.compra.seats === 'string') {
+          data.compra.seats = JSON.parse(data.compra.seats);
+        }
+
+        this.previousPurchase = data.compra;
       } else {
         this.errorMessage = '';
         this.previousPurchase = null;
         this.mostrarFormulario = true;
       }
-    },
+    } else {
+      console.error('Error al verificar la compra en la base de datos');
+    }
+  } catch (error) {
+    console.error('Error en la solicitud de verificación de compra:', error);
+  }
+},
     async enviarDatos() {
       if (!this.nombre || !this.apellido || !this.email) {
         alert('Si us plau, omple tots els camps.');
@@ -244,10 +273,6 @@ export default {
         });
 
         if (response.ok) {
-          // Guardar la compra en localStorage
-          const storedPurchases = JSON.parse(localStorage.getItem('ticketData')) || [];
-          storedPurchases.push(ticketData);
-          localStorage.setItem('ticketData', JSON.stringify(storedPurchases));
 
           Swal.fire({
             icon: 'success',
@@ -267,7 +292,7 @@ export default {
     },
     esDiaDelEspectador() {
       const selectedDate = new Date(this.selectedDate);
-      return selectedDate.getDay() === 3; // 3 = miércoles
+      return selectedDate.getDay() === 3;
     },
   }
 };
