@@ -98,12 +98,12 @@ class TicketController extends Controller
 
 
     public function update(Request $request, $id)
-{
-    $user = $request->user();
-    $ticket = Ticket::where('id', $id)->where('email', $user->email)->first();
+    {
+   
+    $ticket = Ticket::find($id);
 
     if (!$ticket) {
-        return response()->json(['error' => 'No autorizado para modificar este ticket'], 403);
+        return response()->json(['error' => 'Ticket no encontrado'], 404);
     }
 
     $validatedData = $request->validate([
@@ -120,7 +120,7 @@ class TicketController extends Controller
     $ticket->save();
 
     return response()->json(['message' => 'Ticket actualizado correctamente', 'ticket' => $ticket]);
-}
+    }
 
 public function destroy(Request $request, $id)
 {

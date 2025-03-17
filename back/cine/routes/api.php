@@ -12,8 +12,10 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
+
 Route::get('/peliculas', [PeliController::class, 'index']); 
 Route::get('/pelicula/{id}', [PeliController::class, 'show']);
+
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/entradas', [TicketController::class, 'index']);

@@ -11,15 +11,18 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-
     public function user(Request $request)
     {
         return response()->json($request->user());
     }
 
+    public function showLoginForm()
+    {
+        return view('auth.login'); 
+    }
+
     public function register(Request $request)
     {
-        
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
@@ -42,30 +45,28 @@ class AuthController extends Controller
     }
 
     public function login(Request $request)
-    {
-        
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|string|email|max:255',
-            'password' => 'required|string|min:6',
-        ]);
+{
+    $validator = Validator::make($request->all(), [
+        'email' => 'required|string|email|max:255',
+        'password' => 'required|string|min:6',
+    ]);
 
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
-
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            $user = Auth::user(); 
-            $token = $user->createToken('API Token')->plainTextToken; 
-
-            return response()->json(['token' => $token], 200); 
-        }
-
-        return response()->json(['message' => 'Credenciales incorrectas'], 401);
+    if ($validator->fails()) {
+        return redirect()->route('login')->withErrors($validator)->withInput();
     }
+
+    if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+        $request->session()->regenerate(); 
+        return redirect()->route('admin.panel'); 
+    }
+
+    return redirect()->route('login')->withErrors([
+        'email' => 'Credenciales incorrectas',
+    ])->withInput();
+}
 
     public function logout(Request $request)
     {
-        
         $request->user()->currentAccessToken()->delete();
 
         return response()->json(['message' => 'Sesion cerrada exitosamente'], 200);
