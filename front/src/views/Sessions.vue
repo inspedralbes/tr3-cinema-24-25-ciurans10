@@ -54,7 +54,7 @@ export default {
       allMovies: [],
       movies: [],
       selectedDate: new Date().toISOString().split('T')[0],
-      currentWeekStart: this.getStartOfWeek(new Date()),
+      currentWeekStart: new Date(),
     };
   },
 
@@ -80,7 +80,6 @@ export default {
         if (!response.ok) {
           throw new Error('Error al obtener las películas desde la base de datos');
         }
-
         const data = await response.json();
         this.allMovies = data;
         this.updateMoviesForDate();
@@ -96,32 +95,23 @@ export default {
 
     getMoviesForDate(date) {
       if (!this.allMovies.length) return [];
-
       const totalMovies = this.allMovies.length;
       const dateOffset = this.calculateDateOffset(date);
       const startIndex = (dateOffset * 3) % totalMovies;
-
       return this.allMovies.slice(startIndex, startIndex + 3);
     },
 
     calculateDateOffset(date) {
-      const baseDate = new Date('2025-03-01');
+      const baseDate = new Date();
+      baseDate.setHours(0, 0, 0, 0);
       const currentDate = new Date(date);
+      currentDate.setHours(0, 0, 0, 0);
       const diffInDays = Math.floor((currentDate - baseDate) / (1000 * 60 * 60 * 24));
       return diffInDays;
     },
 
     isWednesday(date) {
-      const selectedDate = new Date(date);
-      return selectedDate.getDay() === 3;
-    },
-
-    getStartOfWeek(date) {
-      const startOfWeek = new Date(date);
-      const dayOfWeek = date.getDay(); 
-      const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1; 
-      startOfWeek.setDate(date.getDate() - diff);
-      return startOfWeek;
+      return new Date(date).getDay() === 3;
     },
 
     selectDate(date) {
@@ -139,6 +129,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .container {
