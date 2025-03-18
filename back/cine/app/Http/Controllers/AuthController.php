@@ -16,11 +16,6 @@ class AuthController extends Controller
         return response()->json($request->user());
     }
 
-    public function showLoginForm()
-    {
-        return view('auth.login'); 
-    }
-
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -52,18 +47,19 @@ class AuthController extends Controller
     ]);
 
     if ($validator->fails()) {
-        return redirect()->route('login')->withErrors($validator)->withInput();
+        return response()->json(['errors' => $validator->errors()], 422);
     }
 
-    if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-        $request->session()->regenerate(); 
-        return redirect()->route('admin.panel'); 
+    if (!Auth::attempt($request->only('email', 'password'))) {
+        return response()->json(['message' => 'Credenciales incorrectas'], 401);
     }
 
-    return redirect()->route('login')->withErrors([
-        'email' => 'Credenciales incorrectas',
-    ])->withInput();
+    $user = Auth::user();
+    $token = $user->createToken('API Token')->plainTextToken;
+
+    return response()->json(['token' => $token, 'user' => $user], 200);
 }
+
 
     public function logout(Request $request)
     {

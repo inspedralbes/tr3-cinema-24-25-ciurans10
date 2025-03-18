@@ -9,15 +9,10 @@ use App\Http\Controllers\TicketController;
 
 
 Route::get('/', function () {
-    return redirect()->route('login');
+    return redirect()->route('admin.panel');
 });
 
 Route::get('/home', [AdminController::class, 'index'])->name('home');
-
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.post');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.panel');
@@ -26,7 +21,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/tickets/{id}', [TicketController::class, 'update'])->name('tickets.update');
     Route::delete('/tickets/{id}', [TicketController::class, 'destroy'])->name('tickets.destroy');
 });
-
 
 Route::get('/peliculas', [PeliController::class, 'mostrarPeliculas'])->name('peliculas.index');
 Route::post('/peliculas', [PeliController::class, 'store'])->name('peliculas.store');
