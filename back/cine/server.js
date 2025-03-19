@@ -1,37 +1,82 @@
-import dotenv from 'dotenv'; // Cargar variables de entorno desde .env
+
+import dotenv from 'dotenv'; 
 import express from 'express';
 import nodemailer from 'nodemailer';
 import cors from 'cors';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 
-dotenv.config(); // Configurar dotenv
+dotenv.config(); 
 
 const app = express();
-app.use(cors());
-app.use(express.json());
-
-const transporter = nodemailer.createTransport({
-  host: process.env.MAIL_HOST, // smtp.gmail.com
-  port: process.env.MAIL_PORT, // 587
-  secure: false, // true para 465, false para otros puertos
-  auth: {
-    user: process.env.MAIL_USER, // Tu correo
-    pass: process.env.MAIL_PASS, // Tu contraseña de aplicación
+const server = createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: '*',
   },
 });
 
-// Función para enviar el correo
+app.use(cors());
+app.use(express.json());
+
+const butacasSeleccionadasGlobal = new Map();
+
+io.on('connection', (socket) => {
+  console.log('Usuario conectado:', socket.id);
+
+  socket.emit('butacas-actualizadas', Array.from(butacasSeleccionadasGlobal.entries()));
+
+  socket.on('seleccionar-butaca', (butaca) => {
+    if (!butacasSeleccionadasGlobal.has(butaca)) {
+      butacasSeleccionadasGlobal.set(butaca, socket.id);
+      io.emit('butacas-actualizadas', Array.from(butacasSeleccionadasGlobal.entries()));
+      socket.emit('butaca-seleccionada', butaca); 
+    } else {
+      socket.emit('butaca-no-disponible', butaca); 
+    }
+  });
+
+  socket.on('deseleccionar-butaca', (butaca) => {
+    if (butacasSeleccionadasGlobal.get(butaca) === socket.id) {
+      butacasSeleccionadasGlobal.delete(butaca);
+      io.emit('butacas-actualizadas', Array.from(butacasSeleccionadasGlobal.entries()));
+    }
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Usuario desconectado:', socket.id);
+
+    for (const [butaca, usuario] of butacasSeleccionadasGlobal.entries()) {
+      if (usuario === socket.id) {
+        butacasSeleccionadasGlobal.delete(butaca);
+      }
+    }
+    io.emit('butacas-actualizadas', Array.from(butacasSeleccionadasGlobal.entries()));
+  });
+});
+
+
+const transporter = nodemailer.createTransport({
+  host: process.env.MAIL_HOST, 
+  port: process.env.MAIL_PORT, 
+  secure: false, 
+  auth: {
+    user: process.env.MAIL_USER, 
+    pass: process.env.MAIL_PASS, 
+  },
+});
+
 const enviarCorreo = (correoDestinatario, nombreUsuario, butaquesSeleccionades, precioTotal) => {
-  // Validar que butaquesSeleccionades sea un array
   if (!Array.isArray(butaquesSeleccionades)) {
     console.error('Error: butaquesSeleccionades no es un array');
     return;
   }
 
   const mailOptions = {
-    from: `"${process.env.MAIL_FROM_NAME}" <${process.env.MAIL_FROM_ADDRESS}>`, // Nombre y correo del remitente
-    to: correoDestinatario, // Correo del destinatario (dinámico)
-    subject: 'Confirmación de compra', // Asunto del correo
-    text: `Hola ${nombreUsuario},\n\nGracias por tu compra. Aquí tienes los detalles:\n\nButaques seleccionades: ${butaquesSeleccionades.join(', ')}\nPreu total: ${precioTotal}€\n\n¡Disfruta de la película!`, // Cuerpo del correo
+    from: `"${process.env.MAIL_FROM_NAME}" <${process.env.MAIL_FROM_ADDRESS}>`, 
+    to: correoDestinatario, 
+    subject: 'Confirmación de compra', 
+    text: `Hola ${nombreUsuario},\n\nGracias por tu compra. Aquí tienes los detalles:\n\nButaques seleccionades: ${butaquesSeleccionades.join(', ')}\nPreu total: ${precioTotal}€\n\n¡Disfruta de la película!`,
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
@@ -43,26 +88,22 @@ const enviarCorreo = (correoDestinatario, nombreUsuario, butaquesSeleccionades, 
   });
 };
 
-// Endpoint para enviar correo
 app.post('/enviar-correo', (req, res) => {
   const { correoDestinatario, nombreUsuario, butaquesSeleccionades, precioTotal } = req.body;
 
-  // Validar que todos los campos estén presentes
   if (!correoDestinatario || !nombreUsuario || !butaquesSeleccionades || !precioTotal) {
     return res.status(400).send('Faltan campos obligatorios en la solicitud.');
   }
 
-  // Validar que butaquesSeleccionades sea un array
   if (!Array.isArray(butaquesSeleccionades)) {
     return res.status(400).send('butaquesSeleccionades debe ser un array.');
   }
 
   enviarCorreo(correoDestinatario, nombreUsuario, butaquesSeleccionades, precioTotal);
-
   res.status(200).send('Correo enviado correctamente');
 });
 
 const PORT = process.env.PORT || 3000; 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);
 });

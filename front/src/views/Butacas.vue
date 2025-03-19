@@ -2,7 +2,6 @@
   <div class="contenedor">
     <h1>Selecciona les teves butaques</h1>
 
-    <!-- Mensaje del día del espectador -->
     <div v-if="esDiaDelEspectador()" class="dia-espectador">
       <p>¡Avui és dia del espectador! Preus reduïts: 4€ (normals) i 6€ (VIP).</p>
     </div>
@@ -17,28 +16,33 @@
         <span>Disponibles</span>
       </div>
       <div class="leyenda-item">
+        <div class="color-box groc"></div>
+        <span>VIP</span>
+      </div>
+      <div class="leyenda-item">
         <div class="color-box verd"></div>
         <span>Seleccionades per l'usuari</span>
       </div>
       <div class="leyenda-item">
-        <div class="color-box groc"></div>
-        <span>VIP</span>
+        <div class="color-box blau"></div>
+        <span>Seleccionades per altres usuaris</span>
       </div>
     </div>
 
     <!-- Butaques -->
     <div v-for="(fila, index) in filas" :key="index" class="fila">
-      <span class="fila-label">{{ fila }}</span>
-      <div v-for="butaca in butacasPorFila" :key="butaca" class="butaca" 
-           :class="{
-             seleccionada: butaquesSeleccionades.includes(fila + butaca),
-             ocupada: butacasOcupadas.includes(fila + butaca),
-             'butaca-amarilla': fila === 'F' 
-           }"
-           @click="toggleButaca(fila, butaca)">
-        {{ butaca }}
-      </div>
-    </div>
+  <span class="fila-label">{{ fila }}</span>
+  <div v-for="butaca in butacasPorFila" :key="butaca" class="butaca" 
+    :class="{
+      seleccionada: butaquesSeleccionades.includes(fila + butaca), 
+      ocupada: butacasOcupadas.includes(fila + butaca),
+      seleccionadaPorOtro: butacasSeleccionadasPorOtros.includes(fila + butaca),
+      'butaca-amarilla': fila === 'F'
+    }"
+    @click="toggleButaca(fila, butaca)">
+    {{ butaca }}
+  </div>
+</div>
 
     <!-- Informació de selecció -->
     <div class="info-seleccio">
@@ -80,6 +84,7 @@
 <script>
 import { useRoute, useRouter } from 'vue-router';
 import Swal from 'sweetalert2';
+import io from 'socket.io-client';
 
 export default {
   data() {
@@ -88,6 +93,7 @@ export default {
       butacasPorFila: 10,
       butaquesSeleccionades: [],
       butacasOcupadas: [],
+      butacasSeleccionadasPorOtros: [], 
       precioTotal: 0,
       mostrarFormulario: false,
       nombre: '',
@@ -96,6 +102,7 @@ export default {
       errorMessage: '',
       previousPurchase: null,
       usuarioAutenticado: false,
+      socket: null, 
     };
   },
   setup() {
@@ -121,8 +128,43 @@ export default {
   created() {
     this.verificarSesion();
     this.cargarButacasOcupadas();
+    this.iniciarSocket();
   },
   methods: {
+    iniciarSocket() {
+  this.socket = io('http://localhost:3000');
+
+  this.socket.on('butacas-actualizadas', (butacasSeleccionadas) => {
+    
+    this.butacasSeleccionadasPorOtros = butacasSeleccionadas
+      .filter(([butaca, usuario]) => usuario !== this.socket.id)
+      .map(([butaca]) => butaca);
+  });
+
+  this.socket.on('butaca-seleccionada', (butaca) => {
+    if (!this.butaquesSeleccionades.includes(butaca)) {
+      this.butaquesSeleccionades.push(butaca);
+      const fila = butaca[0];
+      const butacaNum = butaca.slice(1);
+      const precioNormal = this.esDiaDelEspectador() ? 4 : 6;
+      const precioVIP = this.esDiaDelEspectador() ? 6 : 8;
+      const precio = fila === 'F' ? precioVIP : precioNormal;
+      this.precioTotal += precio;
+    }
+  });
+
+  this.socket.on('butaca-no-disponible', (butaca) => {
+    Swal.fire({
+      icon: 'error',
+      title: 'Butaca no disponible',
+      text: 'La butaca ya está seleccionada por otro usuario.',
+    });
+  });
+
+  this.socket.on('deseleccionar-butaca', (butaca) => {
+    this.butacasSeleccionadasPorOtros = this.butacasSeleccionadasPorOtros.filter(b => b !== butaca);
+  });
+},
     async cargarButacasOcupadas() {
       try {
         const response = await fetch('http://localhost:8000/api/butacas-ocupadas');
@@ -141,40 +183,39 @@ export default {
       this.usuarioAutenticado = !!token;
     },
     toggleButaca(fila, butaca) {
-      const butacaId = fila + butaca;
+  const butacaId = fila + butaca;
 
-      if (this.butacasOcupadas.includes(butacaId)) {
-        return;
-      }
+  if (this.butacasOcupadas.includes(butacaId)) {
+    return;
+  }
 
-      if (!this.usuarioAutenticado) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Inicia sesión',
-          text: 'Debes iniciar sesión para seleccionar butacas.',
-        });
-        return;
-      }
+  if (!this.usuarioAutenticado) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Inicia sesión',
+      text: 'Debes iniciar sesión para seleccionar butacas.',
+    });
+    return;
+  }
 
-      const precioNormal = this.esDiaDelEspectador() ? 4 : 6;
-      const precioVIP = this.esDiaDelEspectador() ? 6 : 8;
+  if (this.butaquesSeleccionades.length >= 10 && !this.butaquesSeleccionades.includes(butacaId)) {
+    alert('Només pots seleccionar fins a 10 butaques.');
+    return;
+  }
 
-      const precio = fila === 'F' ? precioVIP : precioNormal;
+  const index = this.butaquesSeleccionades.indexOf(butacaId);
+  if (index === -1) {
+    this.socket.emit('seleccionar-butaca', butacaId);
+  } else {
+    this.butaquesSeleccionades.splice(index, 1);
+    const precioNormal = this.esDiaDelEspectador() ? 4 : 6;
+    const precioVIP = this.esDiaDelEspectador() ? 6 : 8;
+    const precio = fila === 'F' ? precioVIP : precioNormal;
+    this.precioTotal -= precio;
+    this.socket.emit('deseleccionar-butaca', butacaId);
+  }
+},
 
-      if (this.butaquesSeleccionades.length >= 10 && !this.butaquesSeleccionades.includes(butacaId)) {
-        alert('Només pots seleccionar fins a 10 butaques.');
-        return;
-      }
-
-      const index = this.butaquesSeleccionades.indexOf(butacaId);
-      if (index === -1) {
-        this.butaquesSeleccionades.push(butacaId);
-        this.precioTotal += precio;
-      } else {
-        this.butaquesSeleccionades.splice(index, 1);
-        this.precioTotal -= precio;
-      }
-    },
     async checkPreviousPurchase() {
   try {
     const token = localStorage.getItem('token');
@@ -363,6 +404,10 @@ h1 {
   border: 1px solid #ccc;
 }
 
+.blau {
+  background-color: #007bff; 
+}
+
 .vermell {
   background-color: #ff4444; 
 }
@@ -406,7 +451,7 @@ h1 {
 }
 
 .butaca-amarilla {
-  background-color: yellow; 
+  background-color: yellow;
 }
 
 .butaca.seleccionada {
@@ -415,7 +460,13 @@ h1 {
 }
 
 .butaca.ocupada{
-  background-color: #ff4444 
+  background-color: #ff4444;
+  color: white;
+}
+
+.butaca.seleccionadaPorOtro {
+  background-color: #2600ff;
+  color: white;
 }
 
 .info-seleccio {
