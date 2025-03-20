@@ -17,16 +17,16 @@ const routes = [
     component: DetallesPeli,
     props: route => ({
       movieId: route.params.movieId,
-      title: decodeURIComponent(route.params.title),
-      posterPath: decodeURIComponent(route.params.posterPath),
-      selectedDate: route.params.selectedDate
+      title: decodeURIComponent(route.params.title), 
+      posterPath: decodeURIComponent(route.params.posterPath),  
+      selectedDate: route.params.selectedDate,
     })
   },
   { path: '/login', component: Login },
   { path: '/register', component: Register },
   { path: '/butacas', component: Butacas },
   {
-    path: '/butacas/:movieId/:sessionTime/:selectedDate',
+    path: '/butacas/:movieId/:title/:sessionTime/:selectedDate',
     name: 'Butacas',
     component: Butacas,
     props: true 

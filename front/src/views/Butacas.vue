@@ -23,62 +23,66 @@
         <div class="color-box verd"></div>
         <span>Seleccionades per l'usuari</span>
       </div>
-      <div class="leyenda-item">
-        <div class="color-box blau"></div>
-        <span>Seleccionades per altres usuaris</span>
-      </div>
     </div>
 
-    <!-- Butaques -->
-    <div v-for="(fila, index) in filas" :key="index" class="fila">
-  <span class="fila-label">{{ fila }}</span>
-  <div v-for="butaca in butacasPorFila" :key="butaca" class="butaca" 
-    :class="{
-      seleccionada: butaquesSeleccionades.includes(fila + butaca), 
-      ocupada: butacasOcupadas.includes(fila + butaca),
-      seleccionadaPorOtro: butacasSeleccionadasPorOtros.includes(fila + butaca),
-      'butaca-amarilla': fila === 'F'
-    }"
-    @click="toggleButaca(fila, butaca)">
-    {{ butaca }}
+    <div class="butacas-info">
+      <!-- Butaques -->
+      <div class="butacas-container">
+        <div v-for="(fila, index) in filas" :key="index" class="fila">
+          <span class="fila-label">{{ fila }}</span>
+          <div v-for="butaca in butacasPorFila" :key="butaca" class="butaca" 
+            :class="{
+              seleccionada: butaquesSeleccionades.includes(fila + butaca), 
+              ocupada: butacasOcupadas.includes(fila + butaca),
+              seleccionadaPorOtro: butacasSeleccionadasPorOtros.includes(fila + butaca),
+              'butaca-amarilla': fila === 'F'
+            }"
+            @click="toggleButaca(fila, butaca)">
+            {{ butaca }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Informació de selecció -->
+<div class="info-seleccio">
+  <h2>Informació de la compra</h2>
+  <p>Butaques seleccionades: {{ butaquesSeleccionades.join(', ') }}</p>
+  <p>Data: {{ selectedDate }}</p>
+  <p>Hora: {{ sessionTime }}</p>
+  <p>Titulo: {{ title }}</p>
+  <p>Preu total: {{ precioTotal }}€</p>
+
+  <button 
+    :disabled="butaquesSeleccionades.length === 0" 
+    @click="checkPreviousPurchase">
+    Confirmar selecció
+  </button>
+
+  <!-- Formulari de dades -->
+  <div v-if="mostrarFormulario" class="formulario"> 
+    <h2>Introdueix les teves dades</h2>
+    <label>Nom:</label>
+    <input type="text" v-model="nombre" placeholder="El teu nom" />
+    <label>Cognom:</label>
+    <input type="text" v-model="apellido" placeholder="El teu cognom" />
+    <label>Email:</label>
+    <input type="email" v-model="email" placeholder="El teu email" />
+    <button @click="enviarDatos">Enviar</button>
+  </div>
+
+  <div v-if="errorMessage" class="error-message">
+    <p>{{ errorMessage }}</p>
+    <div v-if="previousPurchase">
+      <h3>Compra anterior:</h3>
+      <p>Butaques: {{ previousPurchase.seats.join(', ') }}</p>
+      <p>Nom: {{ previousPurchase.nombre }} {{ previousPurchase.apellido }}</p>
+      <p>Email: {{ previousPurchase.email }}</p> 
+    </div>
   </div>
 </div>
+</div>
+</div>  
 
-    <!-- Informació de selecció -->
-    <div class="info-seleccio">
-      Butaques seleccionades: {{ butaquesSeleccionades.join(', ') }}
-      <br/><br>
-      Preu total: {{ precioTotal }}€
-    </div>
-    
-    <button 
-      :disabled="butaquesSeleccionades.length === 0" 
-      @click="checkPreviousPurchase">
-      Confirmar selecció
-    </button>
-    
-    <!-- Formulari de dades -->
-    <div v-if="mostrarFormulario" class="formulario"> 
-      <h2>Introdueix les teves dades</h2>
-      <label>Nom:</label>
-      <input type="text" v-model="nombre" placeholder="El teu nom" />
-      <label>Cognom:</label>
-      <input type="text" v-model="apellido" placeholder="El teu cognom" />
-      <label>Email:</label>
-      <input type="email" v-model="email" placeholder="El teu email" />
-      <button @click="enviarDatos">Enviar</button>
-    </div>
-
-    <div v-if="errorMessage" class="error-message">
-      <p>{{ errorMessage }}</p>
-      <div v-if="previousPurchase">
-        <h3>Compra anterior:</h3>
-        <p>Butaques: {{ previousPurchase.seats.join(', ') }}</p>
-        <p>Nom: {{ previousPurchase.nombre }} {{ previousPurchase.apellido }}</p>
-        <p>Email: {{ previousPurchase.email }}</p> 
-      </div>
-    </div>
-  </div>
 </template>
 
 <script>
@@ -123,7 +127,10 @@ export default {
     },
     selectedDate() {
       return this.route.params.selectedDate;
-    }
+    },
+    title() {
+    return this.route.params.title || 'Película desconocida';
+  }
   },
   created() {
     this.verificarSesion();
@@ -132,39 +139,38 @@ export default {
   },
   methods: {
     iniciarSocket() {
-  this.socket = io('http://localhost:3000');
+      this.socket = io('http://localhost:3000');
 
-  this.socket.on('butacas-actualizadas', (butacasSeleccionadas) => {
-    
-    this.butacasSeleccionadasPorOtros = butacasSeleccionadas
-      .filter(([butaca, usuario]) => usuario !== this.socket.id)
-      .map(([butaca]) => butaca);
-  });
+      this.socket.on('butacas-actualizadas', (butacasSeleccionadas) => {
+        this.butacasSeleccionadasPorOtros = butacasSeleccionadas
+          .filter(([butaca, usuario]) => usuario !== this.socket.id)
+          .map(([butaca]) => butaca);
+      });
 
-  this.socket.on('butaca-seleccionada', (butaca) => {
-    if (!this.butaquesSeleccionades.includes(butaca)) {
-      this.butaquesSeleccionades.push(butaca);
-      const fila = butaca[0];
-      const butacaNum = butaca.slice(1);
-      const precioNormal = this.esDiaDelEspectador() ? 4 : 6;
-      const precioVIP = this.esDiaDelEspectador() ? 6 : 8;
-      const precio = fila === 'F' ? precioVIP : precioNormal;
-      this.precioTotal += precio;
-    }
-  });
+      this.socket.on('butaca-seleccionada', (butaca) => {
+        if (!this.butaquesSeleccionades.includes(butaca)) {
+          this.butaquesSeleccionades.push(butaca);
+          const fila = butaca[0];
+          const butacaNum = butaca.slice(1);
+          const precioNormal = this.esDiaDelEspectador() ? 4 : 6;
+          const precioVIP = this.esDiaDelEspectador() ? 6 : 8;
+          const precio = fila === 'F' ? precioVIP : precioNormal;
+          this.precioTotal += precio;
+        }
+      });
 
-  this.socket.on('butaca-no-disponible', (butaca) => {
-    Swal.fire({
-      icon: 'error',
-      title: 'Butaca no disponible',
-      text: 'La butaca ya está seleccionada por otro usuario.',
-    });
-  });
+      this.socket.on('butaca-no-disponible', (butaca) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Butaca no disponible',
+          text: 'La butaca ya está seleccionada por otro usuario.',
+        });
+      });
 
-  this.socket.on('deseleccionar-butaca', (butaca) => {
-    this.butacasSeleccionadasPorOtros = this.butacasSeleccionadasPorOtros.filter(b => b !== butaca);
-  });
-},
+      this.socket.on('deseleccionar-butaca', (butaca) => {
+        this.butacasSeleccionadasPorOtros = this.butacasSeleccionadasPorOtros.filter(b => b !== butaca);
+      });
+    },
     async cargarButacasOcupadas() {
       try {
         const response = await fetch('http://localhost:8000/api/butacas-ocupadas');
@@ -183,189 +189,185 @@ export default {
       this.usuarioAutenticado = !!token;
     },
     toggleButaca(fila, butaca) {
-  const butacaId = fila + butaca;
+      const butacaId = fila + butaca;
 
-  if (this.butacasOcupadas.includes(butacaId)) {
+      if (this.butacasOcupadas.includes(butacaId)) {
+        return;
+      }
+
+      if (!this.usuarioAutenticado) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Inicia sesión',
+          text: 'Debes iniciar sesión para seleccionar butacas.',
+        });
+        return;
+      }
+
+      if (this.butaquesSeleccionades.length >= 10 && !this.butaquesSeleccionades.includes(butacaId)) {
+        alert('Només pots seleccionar fins a 10 butaques.');
+        return;
+      }
+
+      const index = this.butaquesSeleccionades.indexOf(butacaId);
+      if (index === -1) {
+        this.socket.emit('seleccionar-butaca', butacaId);
+      } else {
+        this.butaquesSeleccionades.splice(index, 1);
+        const precioNormal = this.esDiaDelEspectador() ? 4 : 6;
+        const precioVIP = this.esDiaDelEspectador() ? 6 : 8;
+        const precio = fila === 'F' ? precioVIP : precioNormal;
+        this.precioTotal -= precio;
+        this.socket.emit('deseleccionar-butaca', butacaId);
+      }
+    },
+    async checkPreviousPurchase() {
+      try {
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Inicia sesión',
+            text: 'Debes iniciar sesión para seleccionar butacas.',
+          });
+          return;
+        }
+
+        const response = await fetch('http://localhost:8000/api/verificar-compra', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            peliculaId: this.peliculaId,
+            sessionTime: this.sessionTime,
+          }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+
+          if (data.existeCompra) {
+            this.errorMessage = 'Ja tens entrades per aquesta sessió.';
+            
+            if (typeof data.compra.seats === 'string') {
+              data.compra.seats = JSON.parse(data.compra.seats);
+            }
+
+            this.previousPurchase = data.compra;
+          } else {
+            this.errorMessage = '';
+            this.previousPurchase = null;
+            this.mostrarFormulario = true;
+          }
+        } else {
+          console.error('Error al verificar la compra en la base de datos');
+        }
+      } catch (error) {
+        console.error('Error en la solicitud de verificación de compra:', error);
+      }
+    },
+    async enviarDatos() {
+  if (!this.nombre || !this.apellido || !this.email) {
+    alert('Si us plau, omple tots els camps.');
     return;
   }
 
-  if (!this.usuarioAutenticado) {
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!emailRegex.test(this.email)) {
+    this.errorMessage = 'L\'email introduït no és vàlid.';
+    return;
+  } else {
+    this.errorMessage = '';
+  }
+
+  const fechaHora = new Date().toLocaleString();
+
+  const ticketData = {
+    peliculaId: this.peliculaId,
+    title: this.title,  
+    sessionTime: this.sessionTime,
+    selectedDate: this.selectedDate,
+    nombre: this.nombre,
+    apellido: this.apellido,
+    email: this.email,
+    seats: this.butaquesSeleccionades,
+    total: this.precioTotal,
+    fechaHora: fechaHora,
+  };
+
+  const token = localStorage.getItem('token');
+
+  if (!token) {
     Swal.fire({
-      icon: 'warning',
-      title: 'Inicia sesión',
-      text: 'Debes iniciar sesión para seleccionar butacas.',
+      icon: 'error',
+      title: 'Error',
+      text: 'No estás autenticado. Por favor, inicia sesión.',
     });
     return;
   }
 
-  if (this.butaquesSeleccionades.length >= 10 && !this.butaquesSeleccionades.includes(butacaId)) {
-    alert('Només pots seleccionar fins a 10 butaques.');
-    return;
-  }
-
-  const index = this.butaquesSeleccionades.indexOf(butacaId);
-  if (index === -1) {
-    this.socket.emit('seleccionar-butaca', butacaId);
-  } else {
-    this.butaquesSeleccionades.splice(index, 1);
-    const precioNormal = this.esDiaDelEspectador() ? 4 : 6;
-    const precioVIP = this.esDiaDelEspectador() ? 6 : 8;
-    const precio = fila === 'F' ? precioVIP : precioNormal;
-    this.precioTotal -= precio;
-    this.socket.emit('deseleccionar-butaca', butacaId);
-  }
-},
-
-    async checkPreviousPurchase() {
   try {
-    const token = localStorage.getItem('token');
-
-    if (!token) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Inicia sesión',
-        text: 'Debes iniciar sesión para seleccionar butacas.',
-      });
-      return;
-    }
-
-    const response = await fetch('http://localhost:8000/api/verificar-compra', {
+    const response = await fetch('http://localhost:8000/api/entradas', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       },
-      body: JSON.stringify({
-        peliculaId: this.peliculaId,
-        sessionTime: this.sessionTime,
-      }),
+      body: JSON.stringify(ticketData),
     });
 
     if (response.ok) {
-      const data = await response.json();
-
-      if (data.existeCompra) {
-        this.errorMessage = 'Ja tens entrades per aquesta sessió.';
-        
-        if (typeof data.compra.seats === 'string') {
-          data.compra.seats = JSON.parse(data.compra.seats);
-        }
-
-        this.previousPurchase = data.compra;
-      } else {
-        this.errorMessage = '';
-        this.previousPurchase = null;
-        this.mostrarFormulario = true;
-      }
-    } else {
-      console.error('Error al verificar la compra en la base de datos');
-    }
-  } catch (error) {
-    console.error('Error en la solicitud de verificación de compra:', error);
-  }
-},
-async enviarDatos() {
-    
-    if (!this.nombre || !this.apellido || !this.email) {
-      alert('Si us plau, omple tots els camps.');
-      return;
-    }
-
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailRegex.test(this.email)) {
-      this.errorMessage = 'L\'email introduït no és vàlid.';
-      return;
-    } else {
-      this.errorMessage = '';
-    }
-
-    const fechaHora = new Date().toLocaleString();
-
-    const ticketData = {
-      peliculaId: this.peliculaId,
-      sessionTime: this.sessionTime,
-      selectedDate: this.selectedDate,
-      nombre: this.nombre,
-      apellido: this.apellido,
-      email: this.email,
-      seats: this.butaquesSeleccionades,
-      total: this.precioTotal,
-      fechaHora: fechaHora,
-    };
-
-    const token = localStorage.getItem('token');
-
-    if (!token) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'No estás autenticado. Por favor, inicia sesión.',
-      });
-      return;
-    }
-
-    try {
-      
-      const response = await fetch('http://localhost:8000/api/entradas', {
+      const emailResponse = await fetch('http://localhost:3000/enviar-correo', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify(ticketData),
+        body: JSON.stringify({
+          correoDestinatario: this.email,
+          nombreUsuario: this.nombre,
+          title: this.title, 
+          fecha: this.selectedDate, 
+          hora: this.sessionTime, 
+          butaquesSeleccionades: this.butaquesSeleccionades,
+          precioTotal: this.precioTotal,
+        }),
       });
 
-      if (response.ok) {
-        
-        const emailResponse = await fetch('http://localhost:3000/enviar-correo', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            correoDestinatario: this.email,
-            nombreUsuario: this.nombre,
-            butaquesSeleccionades: this.butaquesSeleccionades,
-            precioTotal: this.precioTotal,
-          }),
+      if (emailResponse.ok) {
+        Swal.fire({
+          icon: 'success',
+          title: '¡Entrada comprada correctamente!',
+          text: 'Tu compra se ha realizado con éxito y se ha enviado un correo de confirmación.',
+          confirmButtonText: 'Aceptar',
+        }).then(() => {
+          this.router.push('/');
         });
-
-        if (emailResponse.ok) {
-       
-          Swal.fire({
-            icon: 'success',
-            title: '¡Entrada comprada correctamente!',
-            text: 'Tu compra se ha realizado con éxito y se ha enviado un correo de confirmación.',
-            confirmButtonText: 'Aceptar',
-          }).then(() => {
-          
-            this.router.push('/');
-          });
-        } else {
-         
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Error al enviar el correo de confirmación.',
-          });
-        }
       } else {
-      
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: 'Error al guardar la entrada en la base de datos.',
+          text: 'Error al enviar el correo de confirmación.',
         });
       }
-    } catch (error) {
-      console.error('Error en la solicitud:', error);
+    } else {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Hubo un problema al enviar los datos.',
+        text: 'Error al guardar la entrada en la base de datos.',
       });
     }
-  },
+  } catch (error) {
+    console.error('Error en la solicitud:', error);
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Hubo un problema al enviar los datos.',
+    });
+  }
+},
     esDiaDelEspectador() {
       const selectedDate = new Date(this.selectedDate);
       return selectedDate.getDay() === 3;
@@ -404,10 +406,6 @@ h1 {
   border: 1px solid #ccc;
 }
 
-.blau {
-  background-color: #007bff; 
-}
-
 .vermell {
   background-color: #ff4444; 
 }
@@ -424,6 +422,19 @@ h1 {
   background-color: yellow;
 }
 
+.butacas-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 20px;
+}
+
+.butacas-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .fila {
   display: flex;
   justify-content: center;
@@ -438,9 +449,9 @@ h1 {
 }
 
 .butaca {
-  width: 30px;
-  height: 30px;
-  margin: 5px;
+  width: 30px; 
+  height: 30px; 
+  margin: 5px; 
   display: flex;
   justify-content: center;
   align-items: center;
@@ -470,9 +481,10 @@ h1 {
 }
 
 .info-seleccio {
-  margin-top: 20px;
+  margin-left: 80px;
   font-size: 18px;
   color: white;
+  text-align: left;
 }
 
 button {
@@ -485,6 +497,7 @@ button {
   cursor: pointer;
   transition: background-color 0.3s ease;
   margin-top: 20px;
+  text-align: left;
 }
 
 button:disabled {
