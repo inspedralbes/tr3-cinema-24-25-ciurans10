@@ -31,58 +31,68 @@
         <div v-for="(fila, index) in filas" :key="index" class="fila">
           <span class="fila-label">{{ fila }}</span>
           <div v-for="butaca in butacasPorFila" :key="butaca" class="butaca" 
-            :class="{
-              seleccionada: butaquesSeleccionades.includes(fila + butaca), 
-              ocupada: butacasOcupadas.includes(fila + butaca),
-              seleccionadaPorOtro: butacasSeleccionadasPorOtros.includes(fila + butaca),
-              'butaca-amarilla': fila === 'F'
-            }"
-            @click="toggleButaca(fila, butaca)">
-            {{ butaca }}
-          </div>
+          :class="{
+  seleccionada: butaquesSeleccionades.includes(fila + butaca), 
+  ocupada: butacasOcupadas.includes(fila + butaca),
+  seleccionadaPorOtro: butacasSeleccionadasPorOtros.includes(fila + butaca),
+  'butaca-amarilla': fila === 'F' && !butacasOcupadas.includes(fila + butaca) && !butaquesSeleccionades.includes(fila + butaca)
+}"
+    @click="toggleButaca(fila, butaca)">
+    <svg fill="#ffffff" height="30px" width="30px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" stroke="#ffffff">
+      <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+      <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+      <g id="SVGRepo_iconCarrier"> 
+        <g> 
+          <g> 
+            <path d="M460.058,207.774v-89.116C460.058,53.103,406.904,0,341.349,0H170.651C105.096,0,51.942,53.103,51.942,118.658v89.115 c-27.208,0.753-49.469,23.185-49.469,50.669v235.234c0,10.246,8.306,18.323,18.551,18.323H131.76 c10.245,0,19.12-8.077,19.12-18.322v-5.176h210.242v5.176c0,10.245,8.875,18.322,19.12,18.322h110.735 c10.245,0,18.551-8.077,18.551-18.322V258.444C509.527,230.959,487.266,208.527,460.058,207.774z M113.778,474.899H39.575V258.444 c0-7.502,6.103-13.574,13.604-13.574h46.426c7.501,0,14.173,6.072,14.173,13.574V474.899z M361.121,451.401H150.879v-92.754 h210.242V451.401z M361.121,258.444v35.894H150.879v-35.894c0-27.96-23.316-50.676-51.274-50.676H89.043v-89.11 c0-45.097,36.51-81.556,81.607-81.556h170.698c45.098,0,81.608,36.46,81.608,81.556v89.11h-10.562 C384.437,207.768,361.121,230.484,361.121,258.444z M472.425,474.899h-74.203V258.444c0-7.501,6.672-13.574,14.173-13.574h46.426 c7.501,0,13.604,6.072,13.604,13.574V474.899z"></path> 
+          </g> 
+        </g> 
+      </g>
+    </svg>
+</div>
+
         </div>
       </div>
 
       <!-- Informació de selecció -->
-<div class="info-seleccio">
-  <h2>Informació de la compra</h2>
-  <p>Butaques seleccionades: {{ butaquesSeleccionades.join(', ') }}</p>
-  <p>Data: {{ selectedDate }}</p>
-  <p>Hora: {{ sessionTime }}</p>
-  <p>Titulo: {{ title }}</p>
-  <p>Preu total: {{ precioTotal }}€</p>
+      <div class="info-seleccio">
+        <h2>Informació de la compra</h2>
+        <p>Butaques seleccionades: {{ butaquesSeleccionades.join(', ') }}</p>
+        <p>Data: {{ selectedDate }}</p>
+        <p>Hora: {{ sessionTime }}</p>
+        <p>Titulo: {{ title }}</p>
+        <p>Preu total: {{ precioTotal }}€</p>
 
-  <button 
-    :disabled="butaquesSeleccionades.length === 0" 
-    @click="checkPreviousPurchase">
-    Confirmar selecció
-  </button>
+        <button 
+          :disabled="butaquesSeleccionades.length === 0" 
+          @click="checkPreviousPurchase">
+          Confirmar selecció
+        </button>
 
-  <!-- Formulari de dades -->
-  <div v-if="mostrarFormulario" class="formulario"> 
-    <h2>Introdueix les teves dades</h2>
-    <label>Nom:</label>
-    <input type="text" v-model="nombre" placeholder="El teu nom" />
-    <label>Cognom:</label>
-    <input type="text" v-model="apellido" placeholder="El teu cognom" />
-    <label>Email:</label>
-    <input type="email" v-model="email" placeholder="El teu email" />
-    <button @click="enviarDatos">Enviar</button>
-  </div>
+        <!-- Formulari de dades -->
+        <div v-if="mostrarFormulario" class="formulario"> 
+          <h2>Introdueix les teves dades</h2>
+          <label>Nom:</label>
+          <input type="text" v-model="nombre" placeholder="El teu nom" />
+          <label>Cognom:</label>
+          <input type="text" v-model="apellido" placeholder="El teu cognom" />
+          <label>Email:</label>
+          <input type="email" v-model="email" placeholder="El teu email" />
+          <button @click="enviarDatos">Enviar</button>
+        </div>
 
-  <div v-if="errorMessage" class="error-message">
-    <p>{{ errorMessage }}</p>
-    <div v-if="previousPurchase">
-      <h3>Compra anterior:</h3>
-      <p>Butaques: {{ previousPurchase.seats.join(', ') }}</p>
-      <p>Nom: {{ previousPurchase.nombre }} {{ previousPurchase.apellido }}</p>
-      <p>Email: {{ previousPurchase.email }}</p> 
+        <div v-if="errorMessage" class="error-message">
+          <p>{{ errorMessage }}</p>
+          <div v-if="previousPurchase">
+            <h3>Compra anterior:</h3>
+            <p>Butaques: {{ previousPurchase.seats.join(', ') }}</p>
+            <p>Nom: {{ previousPurchase.nombre }} {{ previousPurchase.apellido }}</p>
+            <p>Email: {{ previousPurchase.email }}</p> 
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-</div>
-</div>  
-
+  </div>  
 </template>
 
 <script>
@@ -422,6 +432,11 @@ h1 {
   background-color: yellow;
 }
 
+.butaca svg {
+  width: 30px;
+  height: 30px;
+}
+
 .butacas-info {
   display: flex;
   justify-content: space-between;
@@ -449,35 +464,31 @@ h1 {
 }
 
 .butaca {
-  width: 30px; 
-  height: 30px; 
-  margin: 5px; 
+  width: 30px;
+  height: 30px;
+  margin: 5px;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #f0f0f0;
   cursor: pointer;
-  border: 1px solid #ccc;
-  color: black;
-}
-
-.butaca-amarilla {
-  background-color: yellow;
-}
-
-.butaca.seleccionada {
-  background-color: #4CAF50;
+  transition: fill 0.3s ease;
   color: white;
 }
 
-.butaca.ocupada{
-  background-color: #ff4444;
-  color: white;
+.butaca-amarilla svg{
+  fill: yellow;
 }
 
-.butaca.seleccionadaPorOtro {
-  background-color: #2600ff;
-  color: white;
+.butaca.seleccionada svg{
+  fill: #4CAF50;
+}
+
+.butaca.ocupada svg{
+  fill: #ff4444;
+}
+
+.butaca.seleccionadaPorOtro svg{
+  fill: #2600ff;
 }
 
 .info-seleccio {
