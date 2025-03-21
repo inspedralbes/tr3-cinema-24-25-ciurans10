@@ -14,6 +14,10 @@ Route::get('/', function () {
 
 Route::get('/home', [AdminController::class, 'index'])->name('home');
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/admin', [AdminController::class, 'index'])->name('admin.panel');
+});
+
 Route::get('/peliculas', [PeliController::class, 'mostrarPeliculas'])->name('peliculas.index');
 Route::post('/peliculas', [PeliController::class, 'store'])->name('peliculas.store');
 Route::put('/peliculas/{id}', [PeliController::class, 'update'])->name('peliculas.update');
