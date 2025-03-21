@@ -57,26 +57,6 @@
                     </div>
                 </div>
             </div>
-
-            <div class="col-md-4 mb-4">
-                <div class="card p-3">
-                    <div class="card-body">
-                        <h5 class="card-title text-dark">📅 Gestión de Sesiones</h5>
-                        <p class="card-text text-muted">Crea, edita y elimina sesiones de cine.</p>
-                        <a href="{{ route('sesiones.index') }}" class="btn btn-primary">Ir a Sesiones</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4 mb-4">
-                <div class="card p-3">
-                    <div class="card-body">
-                        <h5 class="card-title text-dark">🎟 Gestión de Tickets</h5>
-                        <p class="card-text text-muted">Vende y administra tickets de cine.</p>
-                        <a href="{{ route('tickets.index') }}" class="btn btn-primary">Ir a Tickets</a>
-                    </div>
-                </div>
-            </div>
         </div>
 
     </div>
