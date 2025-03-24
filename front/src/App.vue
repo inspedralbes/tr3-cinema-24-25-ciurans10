@@ -3,7 +3,7 @@
     <header v-if="!isLoginPage && !isRegisterPage && !isButacasPage">
       <nav>
         <div class="logo-container">
-          <router-link to="/" class="logo">Mi Cine</router-link>
+          <router-link to="/" class="logo">Cine Royale</router-link>
         </div>
         <ul>
           <li><router-link to="/">Inici</router-link></li>
