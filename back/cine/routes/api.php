@@ -26,5 +26,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/verificar-compra', [TicketController::class, 'verificarCompra']);
 });
 
+Route::get('/resumen-recaudacion', [TicketController::class, 'resumenRecaudacion']);
 
 Route::get('/butacas-ocupadas', [TicketController::class, 'obtenerButacasOcupadas']);

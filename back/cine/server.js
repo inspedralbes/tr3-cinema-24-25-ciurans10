@@ -1,4 +1,3 @@
-
 import dotenv from 'dotenv'; 
 import express from 'express';
 import nodemailer from 'nodemailer';
@@ -54,7 +53,6 @@ io.on('connection', (socket) => {
     io.emit('butacas-actualizadas', Array.from(butacasSeleccionadasGlobal.entries()));
   });
 });
-
 
 const transporter = nodemailer.createTransport({
   host: process.env.MAIL_HOST, 

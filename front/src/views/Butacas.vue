@@ -23,6 +23,10 @@
         <div class="color-box verd"></div>
         <span>Seleccionades per l'usuari</span>
       </div>
+      <div class="leyenda-item">
+        <div class="color-box blau"></div>
+        <span>Seleccionades per altres usuaris</span>
+      </div>
     </div>
 
     <div class="butacas-info">
@@ -430,6 +434,10 @@ h1 {
 
 .groc{
   background-color: yellow;
+}
+
+.blau{
+  background-color: #2600ff;
 }
 
 .butaca svg {

@@ -25,12 +25,46 @@ class TicketController extends Controller
     public function obtenerButacasOcupadas()
     {
     $butacasOcupadas = Ticket::all()->flatMap(function ($ticket) {
-        return json_decode($ticket->seats, true);
+        return json_decode($ticket->seats, true) ?? [];
     })->unique()->values();
 
     return response()->json([
         'ocupadas' => $butacasOcupadas
     ]);
+    }
+
+    public function resumenRecaudacion(Request $request)
+    {
+    $fecha = $request->query('fecha');
+
+    $tickets = Ticket::where('selectedDate', $fecha)->get();
+
+    $resumen = [
+        'normal' => ['cantidad' => 0, 'recaudacion' => 0],
+        'vip' => ['cantidad' => 0, 'recaudacion' => 0],
+        'total' => 0
+    ];
+
+    foreach ($tickets as $ticket) {
+        $seats = json_decode($ticket->seats, true);
+
+        foreach ($seats as $butaca) {
+            $fila = $butaca[0];
+            $esVIP = $fila === 'F';
+
+            if ($esVIP) {
+                $resumen['vip']['cantidad']++;
+                $resumen['vip']['recaudacion'] += $ticket->total / count($seats);
+            } else {
+                $resumen['normal']['cantidad']++;
+                $resumen['normal']['recaudacion'] += $ticket->total / count($seats);
+            }
+        }
+    }
+
+    $resumen['total'] = $resumen['normal']['recaudacion'] + $resumen['vip']['recaudacion'];
+
+    return response()->json($resumen);
     }
 
     public function verificarCompra(Request $request)

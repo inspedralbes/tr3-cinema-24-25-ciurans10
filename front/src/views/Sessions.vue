@@ -1,5 +1,10 @@
 <template>
   <div class="container">
+    <!-- Botón Admin (visible solo para admin@admin.com) -->
+    <button v-if="userEmail === 'admin@admin.com'" @click="goToButacas" class="admin-button">
+      Admin
+    </button>
+
     <h1>Properes Sessions</h1>
 
     <div class="date-picker">
@@ -55,6 +60,7 @@ export default {
       movies: [],
       selectedDate: new Date().toISOString().split('T')[0],
       currentWeekStart: new Date(),
+      userEmail: "", // Estado para almacenar el correo del usuario
     };
   },
 
@@ -89,6 +95,32 @@ export default {
       }
     },
 
+    async checkUserEmail() {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        const response = await fetch('http://localhost:8000/api/user', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) throw new Error('Error al obtener los datos del usuario');
+
+        const data = await response.json();
+        this.userEmail = data.email; 
+      } catch (error) {
+        console.error('Error al obtener el correo del usuario', error);
+      }
+    },
+
+    goToButacas() {
+      this.$router.push('/AdminConsulta');
+    },
+
     updateMoviesForDate() {
       this.movies = this.getMoviesForDate(this.selectedDate);
     },
@@ -106,8 +138,7 @@ export default {
       baseDate.setHours(0, 0, 0, 0);
       const currentDate = new Date(date);
       currentDate.setHours(0, 0, 0, 0);
-      const diffInDays = Math.floor((currentDate - baseDate) / (1000 * 60 * 60 * 24));
-      return diffInDays;
+      return Math.floor((currentDate - baseDate) / (1000 * 60 * 60 * 24));
     },
 
     isWednesday(date) {
@@ -126,10 +157,10 @@ export default {
 
   mounted() {
     this.fetchMoviesFromDatabase();
+    this.checkUserEmail(); 
   },
 };
 </script>
-
 
 <style scoped>
 .container {
@@ -137,6 +168,7 @@ export default {
   margin: auto;
   text-align: center;
   font-family: 'Arial', sans-serif;
+  position: relative;
 }
 
 h1 {
@@ -145,15 +177,27 @@ h1 {
   margin-bottom: 20px;
 }
 
+.admin-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: #d9534f;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.admin-button:hover {
+  background-color: #c9302c;
+}
+
 .date-picker {
   margin-bottom: 20px;
   color: white;
-}
-
-label {
-  font-size: 1.2rem;
-  margin-right: 10px;
-  font-weight: bold;
 }
 
 .week-picker {

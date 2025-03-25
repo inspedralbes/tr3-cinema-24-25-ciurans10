@@ -5,8 +5,8 @@
     </div>
 
     <div class="profile-info">
-      <p><strong>Correo Electrónico:</strong> {{ user.email }}</p>
       <p><strong>Nombre de Usuario:</strong> {{ user.username || 'No disponible' }}</p>
+      <p><strong>Correo Electrónico:</strong> {{ user.email }}</p>
     </div>
 
     <div class="tickets-section">
@@ -15,13 +15,13 @@
         <table class="tickets-table">
           <thead>
             <tr>
-              <th>Nom</th>
-              <th>Cognom</th>
+              <th>Nombre</th>
+              <th>Apellido</th>
               <th>Email</th>
               <th>Asientos</th>
-              <th>Data</th>
+              <th>Fecha</th>
               <th>Hora</th>
-              <th>Preu</th>
+              <th>Precio</th>
             </tr>
           </thead>
           <tbody>
@@ -135,25 +135,22 @@ export default {
 <style scoped>
 .profile-container {
   padding: 40px;
-  background-color: #f4f4f4;
-  border-radius: 10px;
-  max-width: 900px;
-  margin: auto;
+  background-color: #2c3e50;
+  border-radius: 15px;
+  max-width: 800px;
   text-align: center;
+  color: white;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .profile-header h2 {
   font-size: 2rem;
-  color: #333;
+  color: #f1c40f;
 }
 
 .profile-info {
   font-size: 1.2rem;
-  color: #555;
-}
-
-.profile-info p {
-  margin: 10px 0;
+  color: #ecf0f1;
 }
 
 .tickets-section {
@@ -163,16 +160,18 @@ export default {
 .tickets-table {
   width: 100%;
   border-collapse: collapse;
+  margin-top: 10px;
 }
 
 .tickets-table th, .tickets-table td {
-  border: 1px solid #ddd;
+  border: 1px solid #ecf0f1;
   padding: 10px;
-  text-align: left;
+  text-align: center;
+  color: white;
 }
 
 .tickets-table th {
-  background-color: #f4b400;
+  background-color: #f1c40f;
   color: black;
 }
 
@@ -181,16 +180,17 @@ export default {
 }
 
 .logout-button {
-  background-color: #ffcc00;
-  padding: 10px 20px;
+  background-color: #e74c3c;
+  padding: 12px 20px;
   font-size: 1rem;
-  color: black;
+  color: white;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  border: none;
 }
 
 .logout-button:hover {
-  background-color: #ffdb4d;
+  background-color: #c0392b;
 }
 </style>

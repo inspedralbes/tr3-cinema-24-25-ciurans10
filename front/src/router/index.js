@@ -33,6 +33,12 @@ const routes = [
   },
   { path: '/sessions', component: Sessions },
   { path: '/perfil', component: Perfil },
+  {
+    path: '/adminconsulta',
+    name: 'AdminConsulta',
+    component: () => import('../views/AdminConsulta.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  }
 ];
 
 const router = createRouter({
