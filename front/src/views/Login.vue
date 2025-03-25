@@ -1,11 +1,14 @@
 <template>
   <div class="w-screen h-screen flex items-center justify-center bg-gray-900 bg-cover login-background">
     <div class="login-container">
-      <h2 class="login-title">Iniciar sesión</h2>
-      <input v-model="email" type="email" placeholder="Correo" class="login-input">
+      <h2 class="login-title">🎬 Iniciar sesión</h2>
+      <input v-model="email" type="email" placeholder="Correo" class="login-input" :class="{'input-error': emailError}">
       <input v-model="password" type="password" placeholder="Contraseña" class="login-input">
-      <button @click="login" class="login-button">Entrar</button>
-
+      
+      <p v-if="emailError" class="error-message">Por favor ingresa un correo válido.</p>
+      
+      <button @click="login" class="login-button" :disabled="emailError">🎟️ Entrar</button>
+      <br><br>
       <p class="register-link">¿No tienes una cuenta? <span @click="goToRegister" class="text-yellow-500 cursor-pointer">Regístrate aquí</span></p>
     </div>
   </div>
@@ -17,14 +20,29 @@ import { useRouter } from 'vue-router';
 export default {
   setup() {
     const router = useRouter(); 
-
     return { router };
   },
   data() {
-    return { email: '', password: '' };
+    return { 
+      email: '', 
+      password: '', 
+      emailError: false  
+    };
   },
   methods: {
+    validateEmail(email) {
+   
+      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      return emailPattern.test(email);
+    },
+
     async login() {
+      
+      if (!this.validateEmail(this.email)) {
+        this.emailError = true;  
+        return;
+      }
+      
       try {
         const res = await fetch('http://localhost:8000/api/login', {
           method: 'POST',
@@ -39,12 +57,12 @@ export default {
         const data = await res.json();
         localStorage.setItem('token', data.token);
 
-        this.$router.push('/'); 
+        this.$router.push('/');
       } catch (error) {
         alert(error.message);
       }
     },
-    
+
     goToRegister() {
       this.$router.push('/register');
     }
@@ -73,7 +91,7 @@ export default {
 }
 
 .login-input {
-  width: 100%;
+  width: 93%;
   padding: 12px;
   margin-bottom: 10px;
   border: 1px solid #ccc;
@@ -83,9 +101,19 @@ export default {
 }
 
 .login-input:focus {
-  outline: none;
   border-color: #FFD700;
   box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.input-error {
+  border-color: red;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+}
+
+.error-message {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 5px;
 }
 
 .login-button {
@@ -106,10 +134,14 @@ export default {
   transform: scale(1.05);
 }
 
+.login-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
 .register-link {
   margin-top: 10px;
   font-size: 1rem;
-  
 }
 
 .register-link span {

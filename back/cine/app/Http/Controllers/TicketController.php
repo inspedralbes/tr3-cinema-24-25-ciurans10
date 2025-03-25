@@ -45,6 +45,8 @@ class TicketController extends Controller
         'total' => 0
     ];
 
+    $precioVIP = 8;
+
     foreach ($tickets as $ticket) {
         $seats = json_decode($ticket->seats, true);
 
@@ -54,7 +56,7 @@ class TicketController extends Controller
 
             if ($esVIP) {
                 $resumen['vip']['cantidad']++;
-                $resumen['vip']['recaudacion'] += $ticket->total / count($seats);
+                $resumen['vip']['recaudacion'] += $precioVIP;
             } else {
                 $resumen['normal']['cantidad']++;
                 $resumen['normal']['recaudacion'] += $ticket->total / count($seats);
