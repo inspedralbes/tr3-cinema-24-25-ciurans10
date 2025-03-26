@@ -87,18 +87,16 @@ export default {
       try {
         this.datosCargados = false;
         
-        // Cargar butacas ocupadas
         const butacasData = await communicationManager.getButacasOcupadasPorFecha(this.selectedDate);
         this.butacasOcupadas = butacasData.ocupadas || [];
         
-        // Cargar resumen de recaudación
         const resumenData = await communicationManager.getResumenRecaudacion(this.selectedDate);
         this.resumen = resumenData;
         
         this.datosCargados = true;
       } catch (error) {
         console.error('Error al cargar datos:', error);
-        // Aquí podrías mostrar un mensaje de error al usuario
+        
       }
     },
     

@@ -58,7 +58,6 @@
         </div>
       </div>
 
-      <!-- Informació de selecció -->
       <div class="info-seleccio">
         <h2>Informació de la compra</h2>
         <p>Butaques seleccionades: {{ butaquesSeleccionades.join(', ') }}</p>
@@ -73,7 +72,6 @@
           Confirmar selecció
         </button>
 
-        <!-- Formulari de dades -->
         <div v-if="mostrarFormulario" class="formulario"> 
           <h2>Introdueix les teves dades</h2>
           <label>Nom:</label>
