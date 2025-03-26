@@ -51,7 +51,7 @@ export default {
         });
 
         if (!res.ok) {
-          throw new Error('Error en l\'autenticació');
+          throw new Error('Correo o contrasenya incorrectes');
         }
 
         const data = await res.json();

@@ -43,7 +43,7 @@
     <div class="container mt-5">
         <h1 class="mb-4 text-primary">🎬 Llistat de Pel·lícules</h1>
         <div class="d-flex justify-content-between mb-3">
-            <a href="{{ route('home') }}" class="btn btn-outline-secondary">🏠 Panell d'Administració</a>
+            <a href="{{ route('admin.panel') }}" class="btn btn-outline-secondary">🏠 Panell d'Administració</a>
             <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createModal">➕ Afegir Pel·lícula</button>
         </div>
 

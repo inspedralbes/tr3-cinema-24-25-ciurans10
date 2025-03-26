@@ -14,10 +14,6 @@ Route::get('/login', function () {
     return view('auth.login'); 
 })->name('login');
 
-Route::get('/home', function () {
-    return view('home'); 
-})->name('home');
-
 Route::post('/login', [AuthController::class, 'loginAdmin'])->name('login.post');
 
 Route::middleware('auth:sanctum')->group(function () {
