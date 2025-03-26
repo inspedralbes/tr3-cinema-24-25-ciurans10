@@ -64,7 +64,7 @@
         <p>Butaques seleccionades: {{ butaquesSeleccionades.join(', ') }}</p>
         <p>Data: {{ selectedDate }}</p>
         <p>Hora: {{ sessionTime }}</p>
-        <p>Titulo: {{ title }}</p>
+        <p>Titol: {{ title }}</p>
         <p>Preu total: {{ precioTotal }}€</p>
 
         <button 
@@ -177,7 +177,7 @@ export default {
         Swal.fire({
           icon: 'error',
           title: 'Butaca no disponible',
-          text: 'La butaca ya está seleccionada por otro usuario.',
+          text: 'La butaca ja esta seleccionada per un altre usuari.',
         });
       });
 
@@ -212,8 +212,8 @@ export default {
       if (!this.usuarioAutenticado) {
         Swal.fire({
           icon: 'warning',
-          title: 'Inicia sesión',
-          text: 'Debes iniciar sesión para seleccionar butacas.',
+          title: 'Inicia sessió',
+          text: 'Tens que iniciar sessió per seleccionar butaques.',
         });
         return;
       }
@@ -242,8 +242,8 @@ export default {
         if (!token) {
           Swal.fire({
             icon: 'warning',
-            title: 'Inicia sesión',
-            text: 'Debes iniciar sesión para seleccionar butacas.',
+            title: 'Inicia sessió',
+            text: 'Tens que iniciar sessió per seleccionar butaques.',
           });
           return;
         }
@@ -318,7 +318,7 @@ export default {
     Swal.fire({
       icon: 'error',
       title: 'Error',
-      text: 'No estás autenticado. Por favor, inicia sesión.',
+      text: 'No estás autenticat. Por favor, inicia sessió.',
     });
     return;
   }
@@ -353,8 +353,8 @@ export default {
       if (emailResponse.ok) {
         Swal.fire({
           icon: 'success',
-          title: '¡Entrada comprada correctamente!',
-          text: 'Tu compra se ha realizado con éxito y se ha enviado un correo de confirmación.',
+          title: '¡Entrada comprada correctament!',
+          text: "La teva compra s'ha realitzat amb exit i s'ha enviat un correo electronic de confirmació.",
           confirmButtonText: 'Aceptar',
         }).then(() => {
           this.router.push('/');
@@ -363,14 +363,14 @@ export default {
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: 'Error al enviar el correo de confirmación.',
+          text: 'Error al enviar el correo de confirmació.',
         });
       }
     } else {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Error al guardar la entrada en la base de datos.',
+        text: 'Error al guarda la entrada en la base de dades.',
       });
     }
   } catch (error) {
@@ -378,7 +378,7 @@ export default {
     Swal.fire({
       icon: 'error',
       title: 'Error',
-      text: 'Hubo un problema al enviar los datos.',
+      text: 'Hi ha un problema per enviar les dades al servidor.',
     });
   }
 },

@@ -1,18 +1,18 @@
 <template>
   <div v-if="movie" class="movie-details">
     <div class="movie-container">
-      <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" alt="Poster de la película" class="movie-poster">
+      <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" alt="Pòster de la pel·lícula" class="movie-poster">
       <div class="movie-info">
         <h2 class="movie-title">{{ movie.title }}</h2>
-        <p><strong>Descripción:</strong> {{ movie.overview }}</p>
+        <p><strong>Descripció:</strong> {{ movie.overview }}</p>
 
         <div class="movie-details-header">
-          <p><strong>Fecha de estreno:</strong> {{ movie.release_date }}</p>
+          <p><strong>Data d'estrena:</strong> {{ movie.release_date }}</p>
         </div>
 
-        <p><strong>Promedio de votos:</strong> {{ movie.vote_average }}</p>
+        <p><strong>Mitjana de vots:</strong> {{ movie.vote_average }}</p>
         
-        <h3>Horarios:</h3>
+        <h3>Horaris:</h3>
         <ul>
           <li v-for="session in sessions" :key="session" @click="selectSession(session)">
             {{ session }}
@@ -40,7 +40,7 @@ const fetchMovieDetails = async () => {
   try {
     const response = await fetch(`http://localhost:8000/api/pelicula/${movieId}`);
     if (!response.ok) {
-      throw new Error('Error al obtener los detalles de la película');
+      throw new Error('Error al obtenir els detalls de la pel·lícula');
     }
     const data = await response.json();
     movie.value = data;

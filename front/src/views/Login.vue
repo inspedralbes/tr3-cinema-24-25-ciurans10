@@ -1,15 +1,15 @@
 <template>
   <div class="w-screen h-screen flex items-center justify-center bg-gray-900 bg-cover login-background">
     <div class="login-container">
-      <h2 class="login-title">🎬 Iniciar sesión</h2>
-      <input v-model="email" type="email" placeholder="Correo" class="login-input" :class="{'input-error': emailError}">
-      <input v-model="password" type="password" placeholder="Contraseña" class="login-input">
+      <h2 class="login-title">🎬 Iniciar sessió</h2>
+      <input v-model="email" type="email" placeholder="Correu electrònic" class="login-input" :class="{'input-error': emailError}">
+      <input v-model="password" type="password" placeholder="Contrasenya" class="login-input">
       
-      <p v-if="emailError" class="error-message">Por favor ingresa un correo válido.</p>
+      <p v-if="emailError" class="error-message">Si us plau, introdueix un correu electrònic vàlid.</p>
       
       <button @click="login" class="login-button" :disabled="emailError">🎟️ Entrar</button>
       <br><br>
-      <p class="register-link">¿No tienes una cuenta? <span @click="goToRegister" class="text-yellow-500 cursor-pointer">Regístrate aquí</span></p>
+      <p class="register-link">No tens un compte? <span @click="goToRegister" class="text-yellow-500 cursor-pointer">Registra't aquí</span></p>
     </div>
   </div>
 </template>
@@ -51,7 +51,7 @@ export default {
         });
 
         if (!res.ok) {
-          throw new Error('Error en la autenticación');
+          throw new Error('Error en l\'autenticació');
         }
 
         const data = await res.json();

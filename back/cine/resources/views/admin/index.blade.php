@@ -44,16 +44,16 @@
 <body>
 
     <div class="container mt-5 text-center">
-        <h1 class="mb-4 text-primary">Panel de Administración</h1>
+        <h1 class="mb-4 text-primary">Panel d'administració</h1>
 
         <div class="row justify-content-center">
            
             <div class="col-md-4 mb-4">
                 <div class="card p-3">
                     <div class="card-body">
-                        <h5 class="card-title text-dark">🎬 Gestión de Películas</h5>
-                        <p class="card-text text-muted">Agrega, edita y elimina películas.</p>
-                        <a href="{{ route('peliculas.index') }}" class="btn btn-primary">Ir a Películas</a>
+                        <h5 class="card-title text-dark">🎬 Gestió de películas</h5>
+                        <p class="card-text text-muted">Afegeix, edita y elimina películas.</p>
+                        <a href="{{ route('peliculas.index') }}" class="btn btn-primary">Anar a Películas</a>
                     </div>
                 </div>
             </div>

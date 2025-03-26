@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="ca">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Listado de Películas</title>
+    <title>Llistat de Pel·lícules</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -41,24 +41,24 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="mb-4 text-primary">🎬 Listado de Películas</h1>
+        <h1 class="mb-4 text-primary">🎬 Llistat de Pel·lícules</h1>
         <div class="d-flex justify-content-between mb-3">
-            <a href="{{ route('home') }}" class="btn btn-outline-secondary">🏠 Panel de Administración</a>
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createModal">➕ Agregar Película</button>
+            <a href="{{ route('home') }}" class="btn btn-outline-secondary">🏠 Panell d'Administració</a>
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createModal">➕ Afegir Pel·lícula</button>
         </div>
 
         <div class="modal fade" id="createModal" tabindex="-1">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header bg-primary text-white">
-                        <h5 class="modal-title">Agregar Nueva Película</h5>
+                        <h5 class="modal-title">Afegir Nova Pel·lícula</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <form action="{{ route('peliculas.store') }}" method="POST">
                         @csrf
                         <div class="modal-body">
                             <div class="mb-3">
-                                <label class="form-label">Título</label>
+                                <label class="form-label">Títol</label>
                                 <input type="text" class="form-control" name="title" required>
                             </div>
                             <div class="mb-3">
@@ -66,17 +66,17 @@
                                 <input type="text" class="form-control" name="poster_path" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Estreno</label>
+                                <label class="form-label">Estrena</label>
                                 <input type="date" class="form-control" name="release_date" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Calificación</label>
+                                <label class="form-label">Qualificació</label>
                                 <input type="number" class="form-control" name="vote_average" min="0" max="10" step="0.1" required>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary">Guardar</button>
+                            <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel·lar</button>
+                            <button type="submit" class="btn btn-primary">Desar</button>
                         </div>
                     </form>
                 </div>
@@ -87,11 +87,11 @@
             <thead class="table-dark">
                 <tr>
                     <th>ID</th>
-                    <th>Título</th>
+                    <th>Títol</th>
                     <th>Poster</th>
-                    <th class="col-estreno">Estreno</th>
-                    <th>Calificación</th>
-                    <th class="col-acciones">Acciones</th>
+                    <th class="col-estreno">Estrena</th>
+                    <th>Qualificació</th>
+                    <th class="col-acciones">Accions</th>
                 </tr>
             </thead>
             <tbody>
@@ -116,7 +116,7 @@
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header bg-warning text-white">
-                                    <h5 class="modal-title">Editar Película</h5>
+                                    <h5 class="modal-title">Editar Pel·lícula</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
                                 <form action="{{ route('peliculas.update', $peli->id) }}" method="POST">
@@ -124,7 +124,7 @@
                                     @method('PUT')
                                     <div class="modal-body">
                                         <div class="mb-3">
-                                            <label class="form-label">Título</label>
+                                            <label class="form-label">Títol</label>
                                             <input type="text" class="form-control" name="title" value="{{ $peli->title }}" required>
                                         </div>
                                         <div class="mb-3">
@@ -132,17 +132,17 @@
                                             <input type="text" class="form-control" name="poster_path" value="{{ $peli->poster_path }}" required>
                                         </div>
                                         <div class="mb-3">
-                                            <label class="form-label">Estreno</label>
+                                            <label class="form-label">Estrena</label>
                                             <input type="date" class="form-control" name="release_date" value="{{ $peli->release_date }}" required>
                                         </div>
                                         <div class="mb-3">
-                                            <label class="form-label">Calificación</label>
+                                            <label class="form-label">Qualificació</label>
                                             <input type="number" class="form-control" name="vote_average" value="{{ $peli->vote_average }}" min="0" max="10" step="0.1" required>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                        <button type="submit" class="btn btn-primary">Guardar</button>
+                                        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel·lar</button>
+                                        <button type="submit" class="btn btn-primary">Desar</button>
                                     </div>
                                 </form>
                             </div>

@@ -1,6 +1,6 @@
 <template>
     <div class="movie-carousel">
-      <h1>Películas Populares</h1>
+      <h1>Pelicules Populars</h1>
       <swiper
         :slidesPerView="3"
         :spaceBetween="30"

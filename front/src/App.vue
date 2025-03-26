@@ -7,10 +7,10 @@
         </div>
         <ul>
           <li><router-link to="/">Inici</router-link></li>
-          <li><router-link to="/cartelera">Películas</router-link></li>
+          <li><router-link to="/cartelera">Pel·lícules</router-link></li>
           <li><router-link to="/sessions">Sessions</router-link></li>
 
-          <li v-if="!isAuthenticated"><router-link to="/login" class="login-button">Inicia Sesió</router-link></li>
+          <li v-if="!isAuthenticated"><router-link to="/login" class="login-button">Inicia Sessió</router-link></li>
 
           <li v-if="isAuthenticated"><router-link to="/perfil" class="profile-button">Perfil</router-link></li>
         </ul>
@@ -24,11 +24,11 @@
     <footer v-if="!isLoginPage && !isRegisterPage && !isButacasPage">
       <div class="footer-container">
         <div class="footer-content">
-          <p>&copy; 2025 Cine Royale. Todos los derechos reservados.</p>
+          <p>&copy; 2025 Cine Royale. Tots els drets reservats.</p>
           <nav class="footer-links">
-            <router-link to="/about">Sobre nosotros</router-link>
-            <router-link to="/contact">Contacto</router-link>
-            <router-link to="/terms">Términos y condiciones</router-link>
+            <router-link to="/about">Sobre nosaltres</router-link>
+            <router-link to="/contact">Contacte</router-link>
+            <router-link to="/terms">Termes i condicions</router-link>
           </nav>
         </div>
       </div>

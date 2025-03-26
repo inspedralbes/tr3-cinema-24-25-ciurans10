@@ -1,19 +1,19 @@
 <template>
   <div class="w-screen h-screen flex items-center justify-center bg-gray-900 bg-cover login-background">
     <div class="login-container">
-      <h2 class="login-title">🎬 Registro</h2>
-      <input v-model="name" type="text" placeholder="Nombre" class="login-input" :class="{'input-error': nameError}" @input="validateName(name)">
-      <input v-model="email" type="email" placeholder="Correo" class="login-input" :class="{'input-error': emailError}" @input="validateEmail(email)">
-      <input v-model="password" type="password" placeholder="Contraseña" class="login-input" :class="{'input-error': passwordError}" @input="validatePassword(password)">
-      <input v-model="confirmPassword" type="password" placeholder="Confirmar Contraseña" class="login-input" :class="{'input-error': confirmPasswordError}" @input="validateConfirmPassword(confirmPassword)">
+      <h2 class="login-title">🎬 Registre</h2>
+      <input v-model="name" type="text" placeholder="Nom" class="login-input" :class="{'input-error': nameError}" @input="validateName(name)">
+      <input v-model="email" type="email" placeholder="Correu" class="login-input" :class="{'input-error': emailError}" @input="validateEmail(email)">
+      <input v-model="password" type="password" placeholder="Contrasenya" class="login-input" :class="{'input-error': passwordError}" @input="validatePassword(password)">
+      <input v-model="confirmPassword" type="password" placeholder="Confirmar Contrasenya" class="login-input" :class="{'input-error': confirmPasswordError}" @input="validateConfirmPassword(confirmPassword)">
       
-      <p v-if="nameError" class="error-message">El nombre es obligatorio.</p>
-      <p v-if="emailError" class="error-message">Por favor ingresa un correo válido.</p>
-      <p v-if="confirmPasswordError" class="error-message">Las contraseñas no coinciden.</p>
+      <p v-if="nameError" class="error-message">El nom és obligatori.</p>
+      <p v-if="emailError" class="error-message">Si us plau, introdueix un correu vàlid.</p>
+      <p v-if="confirmPasswordError" class="error-message">Les contrasenyes no coincideixen.</p>
 
-      <button @click="register" class="login-button" :disabled="hasErrors">🎟️ Registrarse</button>
+      <button @click="register" class="login-button" :disabled="hasErrors">🎟️ Registrar-se</button>
 
-      <p class="login-link">¿Ya tienes una cuenta? <span @click="goToLogin" class="text-yellow-500 cursor-pointer">Inicia sesión aquí</span></p>
+      <p class="login-link">Ja tens un compte? <span @click="goToLogin" class="text-yellow-500 cursor-pointer">Inicia sessió aquí</span></p>
     </div>
   </div>
 </template>
@@ -78,7 +78,7 @@ export default {
         });
 
         if (!res.ok) {
-          throw new Error('Error en el registro');
+          throw new Error('Error en el registre');
         }
 
         const data = await res.json();

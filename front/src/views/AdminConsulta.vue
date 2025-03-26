@@ -53,7 +53,7 @@
       </div>
       
       <div v-else class="cargando">
-        <p>Cargando datos para la fecha seleccionada...</p>
+        <p>Cargant dades per la data seleccionada...</p>
       </div>
     </div>
   </template>

@@ -1,27 +1,27 @@
 <template>
   <div class="profile-container">
     <div class="profile-header">
-      <h2>Bienvenido a tu perfil</h2>
+      <h2>Benvingut al teu perfil</h2>
     </div>
 
     <div class="profile-info">
-      <p><strong>Nombre de Usuario:</strong> {{ user.username || 'No disponible' }}</p>
-      <p><strong>Correo Electrónico:</strong> {{ user.email }}</p>
+      <p><strong>Nom d'usuari:</strong> {{ user.username || 'No disponible' }}</p>
+      <p><strong>Correu electrònic:</strong> {{ user.email }}</p>
     </div>
 
     <div class="tickets-section">
-      <h3>Mis Tickets</h3>
+      <h3>Els meus tickets</h3>
       <div v-if="tickets.length > 0">
         <table class="tickets-table">
           <thead>
             <tr>
-              <th>Nombre</th>
-              <th>Apellido</th>
+              <th>Nom</th>
+              <th>Cognom</th>
               <th>Email</th>
-              <th>Asientos</th>
-              <th>Fecha</th>
+              <th>Seients</th>
+              <th>Data</th>
               <th>Hora</th>
-              <th>Precio</th>
+              <th>Preu</th>
             </tr>
           </thead>
           <tbody>
@@ -37,11 +37,11 @@
           </tbody>
         </table>
       </div>
-      <p v-else>No tienes tickets comprados.</p>
+      <p v-else>No tens tickets comprats.</p>
     </div>
 
     <div class="profile-actions">
-      <button @click="logout" class="logout-button">Cerrar sesión</button>
+      <button @click="logout" class="logout-button">Tancar sessió</button>
     </div>
   </div>
 </template>
@@ -65,7 +65,7 @@ export default {
     async getUserInfo() {
       try {
         const token = localStorage.getItem('token');
-        if (!token) throw new Error('No hay token disponible');
+        if (!token) throw new Error('No hi ha cap token disponible');
 
         const response = await fetch('http://localhost:8000/api/user', {
           method: 'GET',
@@ -75,20 +75,20 @@ export default {
           }
         });
 
-        if (!response.ok) throw new Error('Error al obtener la información del usuario');
+        if (!response.ok) throw new Error('Error a l\'obtenir la informació de l\'usuari');
 
         const data = await response.json();
         this.user.email = data.email;
         this.user.username = data.name;
       } catch (error) {
-        console.error('Error obteniendo la información del usuario', error);
+        console.error('Error obtenint la informació de l\'usuari', error);
       }
     },
 
     async getUserTickets() {
       try {
         const token = localStorage.getItem('token');
-        if (!token) throw new Error('No hay token disponible');
+        if (!token) throw new Error('No hi ha cap token disponible');
 
         const response = await fetch('http://localhost:8000/api/entradas', {
           method: 'GET',
@@ -98,12 +98,12 @@ export default {
           }
         });
 
-        if (!response.ok) throw new Error('Error al obtener los tickets');
+        if (!response.ok) throw new Error('Error a l\'obtenir els tickets');
 
         const data = await response.json();
         this.tickets = data;
       } catch (error) {
-        console.error('Error obteniendo los tickets', error);
+        console.error('Error obtenint els tickets', error);
       }
     },
 
@@ -120,12 +120,12 @@ export default {
           }
         });
 
-        if (!response.ok) throw new Error('Error al cerrar sesión');
+        if (!response.ok) throw new Error('Error en tancar la sessió');
 
         localStorage.removeItem('token');
         this.$router.push('/login');
       } catch (error) {
-        console.error('Error al cerrar sesión', error);
+        console.error('Error en tancar la sessió', error);
       }
     }
   }

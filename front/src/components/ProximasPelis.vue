@@ -1,6 +1,6 @@
 <template>
     <div class="upcoming-movies">
-      <h1>Próximos Estrenos</h1>
+      <h1>Proxims Estrens</h1>
       <div class="movies-grid">
         <div v-for="(movie, index) in movies.slice(0, 3)" :key="index" class="movie-card">
           <img :src="movie.image" :alt="movie.title" />
