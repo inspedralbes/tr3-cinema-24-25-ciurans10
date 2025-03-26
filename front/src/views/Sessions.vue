@@ -53,6 +53,8 @@
 </template>
 
 <script>
+import { communicationManager } from '@/services/CommunicationManager';
+
 export default {
   data() {
     return {
@@ -82,11 +84,7 @@ export default {
   methods: {
     async fetchMoviesFromDatabase() {
       try {
-        const response = await fetch('http://localhost:8000/api/peliculas');
-        if (!response.ok) {
-          throw new Error('Error al obtener las películas desde la base de datos');
-        }
-        const data = await response.json();
+        const data = await communicationManager.getPeliculas();
         this.allMovies = data;
         this.updateMoviesForDate();
       } catch (error) {
@@ -97,20 +95,7 @@ export default {
 
     async checkUserEmail() {
       try {
-        const token = localStorage.getItem('token');
-        if (!token) return;
-
-        const response = await fetch('http://localhost:8000/api/user', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
-
-        if (!response.ok) throw new Error('Error al obtener los datos del usuario');
-
-        const data = await response.json();
+        const data = await communicationManager.getUserInfo();
         this.userEmail = data.email; 
       } catch (error) {
         console.error('Error al obtener el correo del usuario', error);

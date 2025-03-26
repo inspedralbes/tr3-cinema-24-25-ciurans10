@@ -17,17 +17,13 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { communicationManager } from '@/services/CommunicationManager';
 
 const movies = ref([]);
 
-const fetchMoviesFromDatabase = async () => {
+const fetchMovies = async () => {
   try {
-    const response = await fetch('http://localhost:8000/api/peliculas');
-    if (!response.ok) {
-      throw new Error('Error al obtener las películas desde la base de datos');
-    }
-
-    const data = await response.json();
+    const data = await communicationManager.getPeliculas();
     movies.value = data;
   } catch (error) {
     console.error('Error al obtener las películas:', error);
@@ -35,7 +31,7 @@ const fetchMoviesFromDatabase = async () => {
   }
 };
 
-onMounted(fetchMoviesFromDatabase);
+onMounted(fetchMovies);
 </script>
 
 <style scoped>

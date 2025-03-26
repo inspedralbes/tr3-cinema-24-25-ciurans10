@@ -59,64 +59,58 @@
   </template>
   
   <script>
-  export default {
-    data() {
-      return {
-        selectedDate: new Date().toISOString().split('T')[0],
-        datosCargados: false,
-        filas: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'],
-        butacasPorFila: 10,
-        butacasOcupadas: [],
-        resumen: {
-          normal: {
-            cantidad: 0,
-            recaudacion: 0
-          },
-          vip: {
-            cantidad: 0,
-            recaudacion: 0
-          },
-          total: 0
-        }
-      };
+import { communicationManager } from '@/services/CommunicationManager';
+
+export default {
+  data() {
+    return {
+      selectedDate: new Date().toISOString().split('T')[0],
+      datosCargados: false,
+      filas: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'],
+      butacasPorFila: 10,
+      butacasOcupadas: [],
+      resumen: {
+        normal: {
+          cantidad: 0,
+          recaudacion: 0
+        },
+        vip: {
+          cantidad: 0,
+          recaudacion: 0
+        },
+        total: 0
+      }
+    };
+  },
+  methods: {
+    async cargarDatosFecha() {
+      try {
+        this.datosCargados = false;
+        
+        // Cargar butacas ocupadas
+        const butacasData = await communicationManager.getButacasOcupadasPorFecha(this.selectedDate);
+        this.butacasOcupadas = butacasData.ocupadas || [];
+        
+        // Cargar resumen de recaudación
+        const resumenData = await communicationManager.getResumenRecaudacion(this.selectedDate);
+        this.resumen = resumenData;
+        
+        this.datosCargados = true;
+      } catch (error) {
+        console.error('Error al cargar datos:', error);
+        // Aquí podrías mostrar un mensaje de error al usuario
+      }
     },
-    methods: {
-        async cargarDatosFecha() {
-        try {
-            this.datosCargados = false;
-
-            const response = await fetch(`http://localhost:8000/api/butacas-ocupadas?fecha=${this.selectedDate}`);
-            if (response.ok) {
-                const data = await response.json();
-                console.log('Butacas ocupadas:', data);
-                this.butacasOcupadas = data.ocupadas || [];
-            } else {
-                console.error('Error al cargar las butacas ocupadas');
-            }
-
-            const resumenResponse = await fetch(`http://localhost:8000/api/resumen-recaudacion?fecha=${this.selectedDate}`);
-            if (resumenResponse.ok) {
-                const resumenData = await resumenResponse.json();
-                console.log('Resumen de recaudación:', resumenData);
-                this.resumen = resumenData;
-            } else {
-                console.error('Error al cargar el resumen de recaudación');
-            }
-
-            this.datosCargados = true;
-        } catch (error) {
-            console.error('Error en la solicitud:', error);
-        }
-    },
+    
     esButacaOcupada(butacaId) {
-        return this.butacasOcupadas.includes(butacaId);
+      return this.butacasOcupadas.includes(butacaId);
     }
-},
-    mounted() {
-      this.cargarDatosFecha();
-    }
-  };
-  </script>
+  },
+  mounted() {
+    this.cargarDatosFecha();
+  }
+};
+</script>
   
   <style scoped>
   .admin-container {

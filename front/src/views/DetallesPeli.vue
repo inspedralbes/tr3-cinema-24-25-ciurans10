@@ -26,6 +26,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { communicationManager } from '@/services/CommunicationManager';
 
 const route = useRoute();
 const router = useRouter();
@@ -35,22 +36,21 @@ const title = decodeURIComponent(route.params.title);
 const selectedDate = route.params.selectedDate;
 const movie = ref(null);
 const sessions = ref(["16:00"]);
+const isLoading = ref(false);
 
 const fetchMovieDetails = async () => {
+  isLoading.value = true;
   try {
-    const response = await fetch(`http://localhost:8000/api/pelicula/${movieId}`);
-    if (!response.ok) {
-      throw new Error('Error al obtenir els detalls de la pel·lícula');
-    }
-    const data = await response.json();
+    const data = await communicationManager.get(`/pelicula/${movieId}`);
     movie.value = data;
   } catch (error) {
-    console.error(error);
+    console.error('Error:', error);
+  } finally {
+    isLoading.value = false;
   }
 };
 
 const selectSession = (session) => {
-  
   router.push({
     name: 'Butacas',
     params: {

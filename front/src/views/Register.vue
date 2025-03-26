@@ -19,6 +19,8 @@
 </template>
 
 <script>
+import { communicationManager } from '@/services/CommunicationManager';
+
 export default {
   data() {
     return {
@@ -56,7 +58,7 @@ export default {
     },
 
     async register() {
-    
+      
       this.validateName(this.name);
       this.validateEmail(this.email);
       this.validatePassword(this.password);
@@ -67,25 +69,16 @@ export default {
       }
 
       try {
-        const res = await fetch('http://localhost:8000/api/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: this.name,
-            email: this.email,
-            password: this.password,
-          }),
+        const data = await communicationManager.post('/register', {
+          name: this.name,
+          email: this.email,
+          password: this.password
         });
 
-        if (!res.ok) {
-          throw new Error('Error en el registre');
-        }
-
-        const data = await res.json();
         localStorage.setItem('token', data.token);
         this.$router.push('/');
       } catch (error) {
-        alert(error.message);
+        alert(error.message || 'Error en el registre');
       }
     },
 

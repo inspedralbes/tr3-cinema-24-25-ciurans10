@@ -103,6 +103,7 @@
 import { useRoute, useRouter } from 'vue-router';
 import Swal from 'sweetalert2';
 import io from 'socket.io-client';
+import { communicationManager } from '@/services/CommunicationManager';
 
 export default {
   data() {
@@ -187,15 +188,15 @@ export default {
     },
     async cargarButacasOcupadas() {
       try {
-        const response = await fetch('http://localhost:8000/api/butacas-ocupadas');
-        if (response.ok) {
-          const data = await response.json();
-          this.butacasOcupadas = data.ocupadas || [];
-        } else {
-          console.error('Error al cargar las butacas ocupadas');
-        }
+        const data = await communicationManager.getButacasOcupadas();
+        this.butacasOcupadas = data.ocupadas || [];
       } catch (error) {
-        console.error('Error en la solicitud de butacas ocupadas:', error);
+        console.error('Error al cargar las butacas ocupadas:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudieron cargar las butacas ocupadas',
+        });
       }
     },
     verificarSesion() {
@@ -248,98 +249,67 @@ export default {
           return;
         }
 
-        const response = await fetch('http://localhost:8000/api/verificar-compra', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            peliculaId: this.peliculaId,
-            sessionTime: this.sessionTime,
-          }),
-        });
+        const data = await communicationManager.verificarCompra(
+          this.peliculaId, 
+          this.sessionTime
+        );
 
-        if (response.ok) {
-          const data = await response.json();
-
-          if (data.existeCompra) {
-            this.errorMessage = 'Ja tens entrades per aquesta sessió.';
-            
-            if (typeof data.compra.seats === 'string') {
-              data.compra.seats = JSON.parse(data.compra.seats);
-            }
-
-            this.previousPurchase = data.compra;
-          } else {
-            this.errorMessage = '';
-            this.previousPurchase = null;
-            this.mostrarFormulario = true;
+        if (data.existeCompra) {
+          this.errorMessage = 'Ja tens entrades per aquesta sessió.';
+          
+          if (typeof data.compra.seats === 'string') {
+            data.compra.seats = JSON.parse(data.compra.seats);
           }
+
+          this.previousPurchase = data.compra;
         } else {
-          console.error('Error al verificar la compra en la base de datos');
+          this.errorMessage = '';
+          this.previousPurchase = null;
+          this.mostrarFormulario = true;
         }
       } catch (error) {
-        console.error('Error en la solicitud de verificación de compra:', error);
+        console.error('Error al verificar la compra:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo verificar la compra anterior',
+        });
       }
     },
     async enviarDatos() {
-  if (!this.nombre || !this.apellido || !this.email) {
-    alert('Si us plau, omple tots els camps.');
-    return;
-  }
+      if (!this.nombre || !this.apellido || !this.email) {
+        alert('Si us plau, omple tots els camps.');
+        return;
+      }
 
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  if (!emailRegex.test(this.email)) {
-    this.errorMessage = 'L\'email introduït no és vàlid.';
-    return;
-  } else {
-    this.errorMessage = '';
-  }
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailRegex.test(this.email)) {
+        this.errorMessage = 'L\'email introduït no és vàlid.';
+        return;
+      } else {
+        this.errorMessage = '';
+      }
 
-  const fechaHora = new Date().toLocaleString();
+      const fechaHora = new Date().toLocaleString();
 
-  const ticketData = {
-    peliculaId: this.peliculaId,
-    title: this.title,  
-    sessionTime: this.sessionTime,
-    selectedDate: this.selectedDate,
-    nombre: this.nombre,
-    apellido: this.apellido,
-    email: this.email,
-    seats: this.butaquesSeleccionades,
-    total: this.precioTotal,
-    fechaHora: fechaHora,
-  };
+      const ticketData = {
+        peliculaId: this.peliculaId,
+        title: this.title,  
+        sessionTime: this.sessionTime,
+        selectedDate: this.selectedDate,
+        nombre: this.nombre,
+        apellido: this.apellido,
+        email: this.email,
+        seats: this.butaquesSeleccionades,
+        total: this.precioTotal,
+        fechaHora: fechaHora,
+      };
 
-  const token = localStorage.getItem('token');
-
-  if (!token) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: 'No estás autenticat. Por favor, inicia sessió.',
-    });
-    return;
-  }
-
-  try {
-    const response = await fetch('http://localhost:8000/api/entradas', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(ticketData),
-    });
-
-    if (response.ok) {
-      const emailResponse = await fetch('http://localhost:3000/enviar-correo', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      try {
+        
+        await communicationManager.guardarEntrada(ticketData);
+        
+        const correoData = {
           correoDestinatario: this.email,
           nombreUsuario: this.nombre,
           title: this.title, 
@@ -347,10 +317,10 @@ export default {
           hora: this.sessionTime, 
           butaquesSeleccionades: this.butaquesSeleccionades,
           precioTotal: this.precioTotal,
-        }),
-      });
+        };
+        
+        await communicationManager.enviarCorreo(correoData);
 
-      if (emailResponse.ok) {
         Swal.fire({
           icon: 'success',
           title: '¡Entrada comprada correctament!',
@@ -359,29 +329,15 @@ export default {
         }).then(() => {
           this.router.push('/');
         });
-      } else {
+      } catch (error) {
+        console.error('Error en el proceso de compra:', error);
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: 'Error al enviar el correo de confirmació.',
+          text: 'Hi ha un problema per processar la teva compra.',
         });
       }
-    } else {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Error al guarda la entrada en la base de dades.',
-      });
-    }
-  } catch (error) {
-    console.error('Error en la solicitud:', error);
-    Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: 'Hi ha un problema per enviar les dades al servidor.',
-    });
-  }
-},
+    },
     esDiaDelEspectador() {
       const selectedDate = new Date(this.selectedDate);
       return selectedDate.getDay() === 3;

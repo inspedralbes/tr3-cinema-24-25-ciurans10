@@ -15,7 +15,8 @@
 </template>
 
 <script>
-import { useRouter } from 'vue-router'; 
+import { useRouter } from 'vue-router';
+import { communicationManager } from '@/services/CommunicationManager';
 
 export default {
   setup() {
@@ -31,40 +32,31 @@ export default {
   },
   methods: {
     validateEmail(email) {
-   
       const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
       return emailPattern.test(email);
     },
 
     async login() {
-      
       if (!this.validateEmail(this.email)) {
         this.emailError = true;  
         return;
       }
       
       try {
-        const res = await fetch('http://localhost:8000/api/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: this.email, password: this.password })
+        const data = await communicationManager.post('/login', {
+          email: this.email,
+          password: this.password
         });
 
-        if (!res.ok) {
-          throw new Error('Correo o contrasenya incorrectes');
-        }
-
-        const data = await res.json();
         localStorage.setItem('token', data.token);
-
-        this.$router.push('/');
+        this.router.push('/');
       } catch (error) {
-        alert(error.message);
+        alert(error.message || 'Correo o contrasenya incorrectes');
       }
     },
 
     goToRegister() {
-      this.$router.push('/register');
+      this.router.push('/register');
     }
   }
 }

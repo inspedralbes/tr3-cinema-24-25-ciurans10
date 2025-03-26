@@ -47,6 +47,8 @@
 </template>
 
 <script>
+import { communicationManager } from '@/services/CommunicationManager';
+
 export default {
   data() {
     return {
@@ -64,68 +66,33 @@ export default {
   methods: {
     async getUserInfo() {
       try {
-        const token = localStorage.getItem('token');
-        if (!token) throw new Error('No hi ha cap token disponible');
-
-        const response = await fetch('http://localhost:8000/api/user', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-
-        if (!response.ok) throw new Error('Error a l\'obtenir la informació de l\'usuari');
-
-        const data = await response.json();
+        const data = await communicationManager.getUserInfo();
         this.user.email = data.email;
         this.user.username = data.name;
       } catch (error) {
         console.error('Error obtenint la informació de l\'usuari', error);
+      
       }
     },
 
     async getUserTickets() {
       try {
-        const token = localStorage.getItem('token');
-        if (!token) throw new Error('No hi ha cap token disponible');
-
-        const response = await fetch('http://localhost:8000/api/entradas', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-
-        if (!response.ok) throw new Error('Error a l\'obtenir els tickets');
-
-        const data = await response.json();
+        const data = await communicationManager.getUserTickets();
         this.tickets = data;
       } catch (error) {
         console.error('Error obtenint els tickets', error);
+        
       }
     },
 
     async logout() {
       try {
-        const token = localStorage.getItem('token');
-        if (!token) return;
-
-        const response = await fetch('http://localhost:8000/api/logout', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-
-        if (!response.ok) throw new Error('Error en tancar la sessió');
-
+        await communicationManager.logoutUser();
         localStorage.removeItem('token');
         this.$router.push('/login');
       } catch (error) {
         console.error('Error en tancar la sessió', error);
+        
       }
     }
   }

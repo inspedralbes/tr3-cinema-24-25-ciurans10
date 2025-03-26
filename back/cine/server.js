@@ -98,7 +98,7 @@ app.post('/enviar-correo', (req, res) => {
   }
 
   enviarCorreo(correoDestinatario, nombreUsuario, butaquesSeleccionades, precioTotal);
-  res.status(200).send('Correo enviado correctamente');
+  res.json({ success: true, message: "Correo enviado" });
 });
 
 const PORT = process.env.PORT || 3000; 
