@@ -24,7 +24,7 @@
     <footer v-if="!isLoginPage && !isRegisterPage && !isButacasPage">
       <div class="footer-container">
         <div class="footer-content">
-          <p>&copy; 2025 Mi Cine. Todos los derechos reservados.</p>
+          <p>&copy; 2025 Cine Royale. Todos los derechos reservados.</p>
           <nav class="footer-links">
             <router-link to="/about">Sobre nosotros</router-link>
             <router-link to="/contact">Contacto</router-link>

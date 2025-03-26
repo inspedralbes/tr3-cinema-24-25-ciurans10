@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <!-- Botón Admin (visible solo para admin@admin.com) -->
+    
     <button v-if="userEmail === 'admin@admin.com'" @click="goToButacas" class="admin-button">
       Admin
     </button>
@@ -25,7 +25,7 @@
     <div v-if="movies.length" class="movies-grid">
       <div v-for="movie in movies" :key="movie.id" class="movie-card">
         <router-link
-          :to="{
+           :to="{
             name: 'DetallesPeli',
             params: {
               movieId: movie.id,
@@ -60,7 +60,7 @@ export default {
       movies: [],
       selectedDate: new Date().toISOString().split('T')[0],
       currentWeekStart: new Date(),
-      userEmail: "", // Estado para almacenar el correo del usuario
+      userEmail: "", 
     };
   },
 

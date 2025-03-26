@@ -143,7 +143,7 @@ export default {
       return this.route.params.selectedDate;
     },
     title() {
-    return this.route.params.title || 'Película desconocida';
+      return decodeURIComponent(this.route.params.title || 'Película desconocida');
   }
   },
   created() {
