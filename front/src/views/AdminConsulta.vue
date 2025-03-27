@@ -213,14 +213,14 @@ export default {
   
   .resumen {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: 20px;
     margin-top: 20px;
   }
   
   .resumen-item, .resumen-total {
     flex: 1;
-    min-width: 200px;
+    min-width: 330px;
     background: white;
     padding: 15px;
     border-radius: 8px;
@@ -250,4 +250,18 @@ export default {
     padding: 40px;
     font-size: 18px;
   }
+
+  @media screen and (max-width: 768px) {
+  .dashboard {
+    flex-direction: column;
+  }
+
+  .resumen {
+    flex-direction: column; 
+  }
+
+  .resumen-item, .resumen-total {
+    width: 100%; 
+  }
+}
   </style>

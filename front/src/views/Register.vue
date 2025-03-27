@@ -169,4 +169,22 @@ export default {
   font-weight: bold;
   cursor: pointer;
 }
+
+@media (max-width: 450px) {
+  .login-container {
+    width: 90%;
+    padding: 1.5rem;
+  }
+  .login-title {
+    font-size: 1.5rem;
+  }
+  .login-input {
+    font-size: 0.9rem;
+    padding: 10px;
+  }
+  .login-button {
+    font-size: 1rem;
+    padding: 10px;
+  }
+}
 </style>

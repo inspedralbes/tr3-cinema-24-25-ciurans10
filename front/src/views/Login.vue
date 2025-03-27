@@ -64,7 +64,6 @@ export default {
 
 <style scoped>
 .login-container {
-  margin-top: 100px;
   background: rgba(255, 255, 255, 0.9);
   padding: 2rem;
   border-radius: 10px;
@@ -72,6 +71,7 @@ export default {
   border: 2px solid #FFD700;
   width: 400px;
   text-align: center;
+  margin: auto;
 }
 
 .login-title {
@@ -140,5 +140,45 @@ export default {
   text-decoration: underline;
   font-weight: bold;
   cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .login-container {
+    width: 90%;
+    max-width: 400px;
+    margin: 1rem auto;
+    padding: 1.5rem;
+  }
+  
+  .login-title {
+    font-size: 1.8rem;
+  }
+  
+  .login-input {
+    width: 90%;
+    padding: 10px;
+  }
+  
+  .login-button {
+    padding: 10px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-container {
+    width: 85%;
+    padding: 1.2rem;
+  }
+  
+  .login-title {
+    font-size: 1.5rem;
+  }
+  
+  .login-input {
+    width: 88%;
+    padding: 8px;
+    font-size: 0.9rem;
+  }
 }
 </style>

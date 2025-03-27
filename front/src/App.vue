@@ -73,22 +73,23 @@ export default {
 header {
   background: linear-gradient(135deg, #4b79a1, #283e51);
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  padding: 20px 0;
+  padding: 15px 0;
 }
 
 header nav {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
   max-width: 1200px;
   margin: auto;
-  padding: 0 20px;
+  padding: 0 15px;
 }
 
 header .logo-container {
   font-size: 1.5rem;
   font-weight: 700;
   color: #fff;
+  margin-bottom: 10px;
 }
 
 header .logo {
@@ -106,16 +107,18 @@ header nav ul {
   padding: 0;
   margin: 0;
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 header nav ul li {
-  margin: 0 15px;
+  margin: 5px 10px;
 }
 
 header nav ul li a {
   text-decoration: none;
   color: #fff;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   transition: color 0.3s ease;
 }
@@ -124,22 +127,23 @@ header nav ul li a:hover {
   color: #ffcc00;
 }
 
-.login-button {
+.login-button, .profile-button {
   background-color: #ffcc00;
-  padding: 8px 15px;
+  padding: 6px 12px;
   border-radius: 5px;
   color: black !important;
   transition: background 0.3s ease;
+  font-size: 14px;
 }
 
-.login-button:hover {
+.login-button:hover, .profile-button:hover {
   background-color: #ffdb4d;
 }
 
 main {
   flex-grow: 1;
-  padding: 0px;
-  max-width: 1100px;
+  padding: 0;
+  max-width: 100%;
   margin: auto;
   text-align: center;
 }
@@ -147,7 +151,7 @@ main {
 footer {
   background: linear-gradient(135deg, #4b79a1, #283e51);
   color: #fff;
-  padding: 20px 0;
+  padding: 15px 0;
   text-align: center;
   margin-top: 20px;
 }
@@ -155,29 +159,66 @@ footer {
 .footer-container {
   max-width: 1200px;
   margin: auto;
-  padding: 0 20px;
+  padding: 0 15px;
 }
 
 .footer-content p {
   margin: 10px 0;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .footer-links {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 20px;
+  gap: 15px;
   margin-top: 10px;
 }
 
 .footer-links a {
   text-decoration: none;
   color: #ffcc00;
-  font-size: 14px;
+  font-size: 13px;
   transition: color 0.3s ease;
 }
 
 .footer-links a:hover {
   color: #ffdb4d;
+}
+
+@media (min-width: 768px) {
+  header nav {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  
+  header .logo-container {
+    margin-bottom: 0;
+  }
+  
+  header nav ul li {
+    margin: 0 15px;
+  }
+  
+  header nav ul li a {
+    font-size: 18px;
+  }
+  
+  .login-button, .profile-button {
+    padding: 8px 15px;
+    font-size: 16px;
+  }
+  
+  main {
+    padding: 20px;
+  }
+  
+  .footer-content p {
+    font-size: 16px;
+  }
+  
+  .footer-links a {
+    font-size: 14px;
+  }
 }
 </style>

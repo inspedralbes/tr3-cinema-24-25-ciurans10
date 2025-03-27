@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-    
     <button v-if="userEmail === 'admin@admin.com'" @click="goToButacas" class="admin-button">
       Admin
     </button>
@@ -48,7 +47,7 @@
       </div>
     </div>
 
-    <p v-else>Cargando películas...</p>
+    <p v-else class="loading-text">Cargando películas...</p>
   </div>
 </template>
 
@@ -154,26 +153,28 @@ export default {
   text-align: center;
   font-family: 'Arial', sans-serif;
   position: relative;
+  padding: 15px;
 }
 
 h1 {
   color: white;
-  font-size: 2.5rem;
-  margin-bottom: 20px;
+  font-size: 1.8rem;
+  margin-bottom: 15px;
 }
 
 .admin-button {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 10px;
+  right: 10px;
   background-color: #d9534f;
   color: white;
-  padding: 10px 20px;
+  padding: 8px 12px;
   border: none;
   border-radius: 5px;
-  font-size: 1rem;
+  font-size: 0.9rem;
   cursor: pointer;
   transition: background 0.3s;
+  z-index: 10;
 }
 
 .admin-button:hover {
@@ -181,28 +182,33 @@ h1 {
 }
 
 .date-picker {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   color: white;
+  overflow-x: auto;
+  padding-bottom: 10px;
 }
 
 .week-picker {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
 }
 
 .week-days {
   display: flex;
-  gap: 10px;
+  gap: 8px;
+  padding: 0 5px;
 }
 
 .week-days button {
-  padding: 10px;
+  padding: 8px 10px;
+  min-width: 50px;
   border: 1px solid #ccc;
   border-radius: 5px;
   background: white;
   cursor: pointer;
+  font-size: 0.8rem;
+  white-space: nowrap;
 }
 
 .week-days button.active {
@@ -212,37 +218,101 @@ h1 {
 
 .movies-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 30px;
+  grid-template-columns: 1fr;
+  gap: 20px;
 }
 
 .movie-card {
   background: #ffffff;
-  border-radius: 15px;
-  padding: 20px;
+  border-radius: 12px;
+  padding: 15px;
   text-align: center;
-  max-height: 500px;
   transition: transform 0.3s ease-in-out;
 }
 
-.movie-card:hover {
-  transform: scale(1.04);
-}
-
 .movie-image {
-  max-width: 250px;
-  border-radius: 12px;
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  max-height: 350px;
 }
 
 h2 {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   color: #333;
   margin-top: 10px;
 }
 
 h3 {
   color: #28a745;
-  font-size: 1.3rem;
-  margin-top: 15px;
+  font-size: 1.1rem;
+  margin-top: 10px;
+}
+
+.loading-text {
+  color: white;
+  font-size: 1rem;
+}
+
+@media (min-width: 600px) {
+  h1 {
+    font-size: 2rem;
+  }
+  
+  .movies-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .week-days button {
+    min-width: 60px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (min-width: 900px) {
+  .container {
+    padding: 20px;
+  }
+  
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+  }
+  
+  .admin-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+  }
+  
+  .movies-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+  }
+  
+  .movie-card {
+    padding: 20px;
+  }
+  
+  .movie-image {
+    max-width: 250px;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  h3 {
+    font-size: 1.3rem;
+  }
+  
+  .week-days {
+    gap: 10px;
+  }
+  
+  .week-days button {
+    padding: 10px;
+    min-width: 70px;
+    font-size: 1rem;
+  }
 }
 </style>

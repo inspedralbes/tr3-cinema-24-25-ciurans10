@@ -128,6 +128,9 @@ export default {
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
+  overflow-x: auto;
+  display: block; 
+  white-space: nowrap; 
 }
 
 .tickets-table th, .tickets-table td {
@@ -159,5 +162,24 @@ export default {
 
 .logout-button:hover {
   background-color: #c0392b;
+}
+
+@media screen and (max-width: 768px) {
+  .profile-container {
+    padding: 15px;
+  }
+
+  .profile-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .profile-info {
+    font-size: 1rem;
+  }
+
+  .logout-button {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+  }
 }
 </style>

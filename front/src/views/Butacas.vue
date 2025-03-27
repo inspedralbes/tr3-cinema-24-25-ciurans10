@@ -519,4 +519,57 @@ button:hover {
   border-radius: 5px;
   margin-bottom: 20px;
 }
+
+@media (max-width: 768px) {
+  .contenedor {
+    padding: 10px;
+  }
+
+  .leyenda {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .butacas-info {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .info-seleccio {
+    margin-left: 0;
+    text-align: center;
+    font-size: 16px;
+  }
+
+  .butacas-container {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .fila {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .butaca {
+    width: 25px;
+    height: 25px;
+    margin: 3px;
+  }
+
+  .butaca svg {
+    width: 25px;
+    height: 25px;
+  }
+
+  .formulario {
+    width: 100%;
+  }
+
+  button {
+    width: 100%;
+  }
+}
+
 </style>
