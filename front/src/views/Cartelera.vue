@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="title">Películas</h2>
+    <h2 class="title">Pel·lícules</h2>
     <div v-if="movies.length" class="movie-grid">
       <div v-for="movie in movies" :key="movie.id" class="movie-card">
           <div class="movie-image-container">
