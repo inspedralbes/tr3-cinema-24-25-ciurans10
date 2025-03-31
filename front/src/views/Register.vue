@@ -6,88 +6,104 @@
       <input v-model="email" type="email" placeholder="Correu" class="login-input" :class="{'input-error': emailError}" @input="validateEmail(email)">
       <input v-model="password" type="password" placeholder="Contrasenya" class="login-input" :class="{'input-error': passwordError}" @input="validatePassword(password)">
       <input v-model="confirmPassword" type="password" placeholder="Confirmar Contrasenya" class="login-input" :class="{'input-error': confirmPasswordError}" @input="validateConfirmPassword(confirmPassword)">
-      
+     
       <p v-if="nameError" class="error-message">El nom és obligatori.</p>
       <p v-if="emailError" class="error-message">Si us plau, introdueix un correu vàlid.</p>
       <p v-if="confirmPasswordError" class="error-message">Les contrasenyes no coincideixen.</p>
 
+
       <button @click="register" class="login-button" :disabled="hasErrors">🎟️ Registrar-se</button>
+
 
       <p class="login-link">Ja tens un compte? <span @click="goToLogin" class="text-yellow-500 cursor-pointer">Inicia sessió aquí</span></p>
     </div>
   </div>
 </template>
 
-<script>
-import { communicationManager } from '@/services/CommunicationManager';
 
-export default {
-  data() {
-    return {
-      name: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      nameError: false,
-      emailError: false,
-      passwordError: false,
-      confirmPasswordError: false
-    };
-  },
-  computed: {
-    hasErrors() {
-      return this.nameError || this.emailError || this.passwordError || this.confirmPasswordError;
-    }
-  },
-  methods: {
-    validateName(name) {
-      this.nameError = !name.trim(); 
-    },
+<script setup>
+import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { registerUser } from '@/services/CommunicationManager';
 
-    validateEmail(email) {
-      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-      this.emailError = !emailPattern.test(email); 
-    },
 
-    validatePassword(password) {
-      this.passwordError = password.length < 6; 
-    },
+const router = useRouter();
 
-    validateConfirmPassword(confirmPassword) {
-      this.confirmPasswordError = confirmPassword !== this.password;
-    },
 
-    async register() {
-      
-      this.validateName(this.name);
-      this.validateEmail(this.email);
-      this.validatePassword(this.password);
-      this.validateConfirmPassword(this.confirmPassword);
+// Datos reactivos
+const name = ref('');
+const email = ref('');
+const password = ref('');
+const confirmPassword = ref('');
+const nameError = ref(false);
+const emailError = ref(false);
+const passwordError = ref(false);
+const confirmPasswordError = ref(false);
 
-      if (this.hasErrors) {
-        return;
-      }
 
-      try {
-        const data = await communicationManager.post('/register', {
-          name: this.name,
-          email: this.email,
-          password: this.password
-        });
+// Computed properties
+const hasErrors = computed(() => {
+  return nameError.value || emailError.value || passwordError.value || confirmPasswordError.value;
+});
 
-        localStorage.setItem('token', data.token);
-        this.$router.push('/');
-      } catch (error) {
-        alert(error.message || 'Error en el registre');
-      }
-    },
 
-    goToLogin() {
-      this.$router.push('/login');
-    }
+// Métodos
+const validateName = (name) => {
+  nameError.value = !name.trim();
+};
+
+
+const validateEmail = (email) => {
+  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  emailError.value = !emailPattern.test(email);
+};
+
+
+const validatePassword = (password) => {
+  passwordError.value = password.length < 6;
+};
+
+
+const validateConfirmPassword = (confirmPassword) => {
+  confirmPasswordError.value = confirmPassword !== password.value;
+};
+
+
+const register = async () => {
+  validateName(name.value);
+  validateEmail(email.value);
+  validatePassword(password.value);
+  validateConfirmPassword(confirmPassword.value);
+
+
+  if (hasErrors.value) {
+    return;
   }
-}
+
+
+  try {
+    const data = await registerUser({
+      name: name.value,
+      email: email.value,
+      password: password.value
+    });
+
+
+    if (data.token) {
+      localStorage.setItem('token', data.token);
+      router.push('/');
+    }
+  } catch (error) {
+    alert(error.message || 'Error en el registre');
+  }
+};
+
+
+const goToLogin = () => {
+  router.push('/login');
+};
 </script>
+
 
 <style scoped>
 .login-container {
@@ -101,6 +117,7 @@ export default {
   text-align: center;
 }
 
+
 .login-title {
   font-size: 2rem;
   font-weight: bold;
@@ -108,6 +125,7 @@ export default {
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   margin-bottom: 1rem;
 }
+
 
 .login-input {
   width: 93%;
@@ -119,22 +137,26 @@ export default {
   transition: all 0.3s ease-in-out;
 }
 
+
 .login-input:focus {
   outline: none;
   border-color: #FFD700;
   box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
 }
 
+
 .input-error {
   border-color: red;
   box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
 }
+
 
 .error-message {
   color: red;
   font-size: 0.9rem;
   margin-top: 5px;
 }
+
 
 .login-button {
   width: 100%;
@@ -149,26 +171,31 @@ export default {
   transition: all 0.3s ease-in-out;
 }
 
+
 .login-button:hover {
   background: #FFC107;
   transform: scale(1.05);
 }
+
 
 .login-button:disabled {
   background: #ccc;
   cursor: not-allowed;
 }
 
+
 .login-link {
   margin-top: 10px;
   font-size: 1rem;
 }
+
 
 .login-link span {
   text-decoration: underline;
   font-weight: bold;
   cursor: pointer;
 }
+
 
 @media (max-width: 450px) {
   .login-container {

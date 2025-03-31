@@ -86,7 +86,7 @@ const enviarCorreo = (correoDestinatario, nombreUsuario, butaquesSeleccionades, 
   });
 };
 
-app.post('/enviar-correo', (req, res) => {
+app.post('/api/enviar-correo', (req, res) => {
   const { correoDestinatario, nombreUsuario, butaquesSeleccionades, precioTotal } = req.body;
 
   if (!correoDestinatario || !nombreUsuario || !butaquesSeleccionades || !precioTotal) {

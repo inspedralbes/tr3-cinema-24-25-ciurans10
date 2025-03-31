@@ -59,7 +59,7 @@
   </template>
   
   <script>
-import { communicationManager } from '@/services/CommunicationManager';
+import { getButacasOcupadasPorFecha,getResumenRecaudacion } from '@/services/CommunicationManager';
 
 export default {
   data() {
@@ -87,10 +87,10 @@ export default {
       try {
         this.datosCargados = false;
         
-        const butacasData = await communicationManager.getButacasOcupadasPorFecha(this.selectedDate);
+        const butacasData = await getButacasOcupadasPorFecha(this.selectedDate);
         this.butacasOcupadas = butacasData.ocupadas || [];
         
-        const resumenData = await communicationManager.getResumenRecaudacion(this.selectedDate);
+        const resumenData = await getResumenRecaudacion(this.selectedDate);
         this.resumen = resumenData;
         
         this.datosCargados = true;

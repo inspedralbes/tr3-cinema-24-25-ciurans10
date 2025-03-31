@@ -22,7 +22,7 @@ import { ref, onMounted } from 'vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import { Navigation, Pagination } from 'swiper/modules';
 import 'swiper/swiper-bundle.css';
-import { communicationManager } from '@/services/CommunicationManager';
+import { get } from '@/services/CommunicationManager';
 
 const movies = ref([]);
 const modules = [Navigation, Pagination];
@@ -30,16 +30,11 @@ const modules = [Navigation, Pagination];
 onMounted(async () => {
   try {
  
-    const originalBaseUrl = communicationManager.baseUrl;
-    communicationManager.baseUrl = 'https://api.themoviedb.org/3';
-    
-    const data = await communicationManager.get(
-      '/movie/popular?api_key=fdf961e48b3b6bc9aa35095abb5a8d86&language=es-ES&page=1'
+    const data = await get(
+    'http://api.themoviedb.org/3/movie/popular?api_key=fdf961e48b3b6bc9aa35095abb5a8d86&language=es-ES&page=1'
     );
     
     movies.value = data.results;
-    
-    communicationManager.baseUrl = originalBaseUrl;
   } catch (error) {
     console.error('Error al obtener películas populares:', error);
     

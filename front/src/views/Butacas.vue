@@ -101,7 +101,7 @@
 import { useRoute, useRouter } from 'vue-router';
 import Swal from 'sweetalert2';
 import io from 'socket.io-client';
-import { communicationManager } from '@/services/CommunicationManager';
+import { getButacasOcupadas, verificarCompra,guardarEntrada, enviarCorreo} from '@/services/CommunicationManager';
 
 export default {
   data() {
@@ -186,7 +186,7 @@ export default {
     },
     async cargarButacasOcupadas() {
       try {
-        const data = await communicationManager.getButacasOcupadas();
+        const data = await getButacasOcupadas();
         this.butacasOcupadas = data.ocupadas || [];
       } catch (error) {
         console.error('Error al cargar las butacas ocupadas:', error);
@@ -247,7 +247,7 @@ export default {
           return;
         }
 
-        const data = await communicationManager.verificarCompra(
+        const data = await verificarCompra(
           this.peliculaId, 
           this.sessionTime
         );
@@ -305,7 +305,7 @@ export default {
 
       try {
         
-        await communicationManager.guardarEntrada(ticketData);
+        await guardarEntrada(ticketData);
         
         const correoData = {
           correoDestinatario: this.email,
@@ -317,7 +317,7 @@ export default {
           precioTotal: this.precioTotal,
         };
         
-        await communicationManager.enviarCorreo(correoData);
+        await enviarCorreo(correoData);
 
         Swal.fire({
           icon: 'success',

@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { communicationManager } from '@/services/CommunicationManager';
+import { getUserInfo, getUserTickets, logoutUser } from '@/services/CommunicationManager';
 
 export default {
   data() {
@@ -66,7 +66,7 @@ export default {
   methods: {
     async getUserInfo() {
       try {
-        const data = await communicationManager.getUserInfo();
+        const data = await getUserInfo();
         this.user.email = data.email;
         this.user.username = data.name;
       } catch (error) {
@@ -77,7 +77,7 @@ export default {
 
     async getUserTickets() {
       try {
-        const data = await communicationManager.getUserTickets();
+        const data = await getUserTickets();
         this.tickets = data;
       } catch (error) {
         console.error('Error obtenint els tickets', error);
@@ -87,7 +87,7 @@ export default {
 
     async logout() {
       try {
-        await communicationManager.logoutUser();
+        await logoutUser();
         localStorage.removeItem('token');
         this.$router.push('/login');
       } catch (error) {

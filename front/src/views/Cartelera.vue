@@ -17,13 +17,13 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { communicationManager } from '@/services/CommunicationManager';
+import { getPeliculas } from '@/services/CommunicationManager';
 
 const movies = ref([]);
 
 const fetchMovies = async () => {
   try {
-    const data = await communicationManager.getPeliculas();
+    const data = await getPeliculas();
     movies.value = data;
   } catch (error) {
     console.error('Error al obtener las películas:', error);

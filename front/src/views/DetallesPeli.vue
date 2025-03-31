@@ -49,7 +49,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { communicationManager } from '@/services/CommunicationManager';
+import { get } from '@/services/CommunicationManager';
 
 const route = useRoute();
 const router = useRouter();
@@ -61,7 +61,7 @@ const isLoading = ref(true);
 
 const fetchMovieDetails = async () => {
   try {
-    const data = await communicationManager.get(`/pelicula/${movieId}`);
+    const data = await get(`/pelicula/${movieId}`);
     movie.value = data;
   } catch (error) {
     console.error('Error:', error);

@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import { communicationManager } from '@/services/CommunicationManager';
+import { getPeliculas, getUserInfo  } from '@/services/CommunicationManager';
 
 export default {
   data() {
@@ -83,7 +83,7 @@ export default {
   methods: {
     async fetchMoviesFromDatabase() {
       try {
-        const data = await communicationManager.getPeliculas();
+        const data = await getPeliculas();
         this.allMovies = data;
         this.updateMoviesForDate();
       } catch (error) {
@@ -94,7 +94,7 @@ export default {
 
     async checkUserEmail() {
       try {
-        const data = await communicationManager.getUserInfo();
+        const data = await getUserInfo();
         this.userEmail = data.email; 
       } catch (error) {
         console.error('Error al obtener el correo del usuario', error);
